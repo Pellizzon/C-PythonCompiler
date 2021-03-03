@@ -114,7 +114,7 @@ class Parser:
                     raise ValueError("Erro")
                 t = self.tokens.returnNextToken()
             if t.type == "EOF":
-                return resultado
+                return int(resultado)
             else:
                 raise ValueError("Erro")
         else:
