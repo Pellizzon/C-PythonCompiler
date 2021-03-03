@@ -17,7 +17,7 @@ class Tokenizer:
 
     def tokenize(self):
         # " " is allowed, however the compiler ignores it
-        allowed_symbols = ["+", "-", "*", "-", " "]
+        allowed_symbols = ["+", "-", "*", "/", " "]
 
         number = ""
         for i in self.origin:
