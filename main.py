@@ -26,7 +26,7 @@ class Compiler:
         if len(self.symbols) <= len(self.numbers) - 2:
             # 3 4 --> 2 numbers 0 symbols
             # 2+4 4 --> 3 numbers 1 symbol
-            print("Error: Insufficient operands to perform operation")
+            raise ValueError("Error: Insufficient operands to perform operation")
             return True
         return False
 
@@ -36,11 +36,11 @@ class Compiler:
             for i in range(len(self.string)):
                 if self.string[i] == "+" or self.string[i] == "-":
                     if self.string[i + 1] == "+" or self.string[i + 1] == "-":
-                        print("Error: invalid syntax")
+                        raise ValueError("Error: invalid syntax")
                         return False
         except:
             # example: 10+3+4-
-            print("Error: invalid operand position")
+            raise ValueError("Error: invalid operand position")
             return False
 
         return True
@@ -48,7 +48,7 @@ class Compiler:
     def isValidEquation(self):
         if len(self.numbers) > 1:
             return True
-        print("Error: cannot calculate equation with one number")
+        raise ValueError("Error: cannot calculate equation with one number")
         return False
 
     def calculate(self):
