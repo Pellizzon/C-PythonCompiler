@@ -1,7 +1,5 @@
 import sys
 
-# import re
-
 
 class Token:
     def __init__(self, initType, initValue):
@@ -47,28 +45,6 @@ class Tokenizer:
             self.tokens.append(Token("INT", int(number)))
         # it's also needed to add the EOF Token:
         self.tokens.append(Token("EOF", None))
-
-        # # https://stackoverflow.com/questions/691148/pythonic-way-to-implement-a-tokenizer
-        # scanner = re.Scanner(
-        #     [
-        #         (r"[0-9]+", lambda scanner, token: Token("INT", int(token))),
-        #         (r"\+", lambda scanner, token: Token("PLUS", token)),
-        #         (r"-", lambda scanner, token: Token("MINUS", token)),
-        #         (r"\*", lambda scanner, token: Token("MULT", token)),
-        #         (r"/", lambda scanner, token: Token("DIV", token)),
-        #         (r"\w+", lambda scanner, token: Token("TRASH", None)),
-        #         (r"\s+", None),
-        #     ]
-        # )
-
-        # results, remainder = scanner.scan(self.origin)
-
-        # results.append(Token("EOF", None))
-
-        # self.tokens = results
-
-        # for i in list(self.tokens):
-        #     print(i.type, i.value)
 
     def returnNextToken(self):
         self.actual = self.tokens[self.position]
