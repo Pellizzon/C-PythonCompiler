@@ -43,7 +43,8 @@ class Tokenizer:
                 raise ValueError("Erro")
 
         # whenever the loop ends, we must add the last number to the tokens:
-        self.tokens.append(Token("INT", int(number)))
+        if number != "":
+            self.tokens.append(Token("INT", int(number)))
         # it's also needed to add the EOF Token:
         self.tokens.append(Token("EOF", None))
 
