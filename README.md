@@ -14,6 +14,10 @@ v1.1
 
 ```python main.py '2 + 3 * 5'```
 
+```python main.py '2 + 3 * 3 /*aaaaaaaaaaa*/+ 4'```
+
+```python main.py '2 + 3 * 3 /*aaaaaaaaaaa*/*/+ 4'```
+
 ![DiagramaSintatico](DiagramaSintatico.png)
 
 ![EBNF](EBNF.png)

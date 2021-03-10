@@ -78,13 +78,13 @@ class Parser:
                     if t.type == "INT":
                         resultado *= t.value
                     else:
-                        continue
+                        raise ValueError("Erro")
                 elif t.type == "DIV":
                     t = self.tokens.returnNextToken()
                     if t.type == "INT":
                         resultado /= t.value
                     else:
-                        continue
+                        raise ValueError("Erro")
                 t = self.tokens.returnNextToken()
             nextToken = t
             return int(resultado), nextToken
