@@ -1,4 +1,5 @@
 import sys
+import re
 
 
 class Token:
@@ -52,53 +53,65 @@ class Tokenizer:
         return self.actual
 
 
+class PrePro:
+    def __init__(self, initCode):
+        self.code = initCode
+
+    def filter(self):
+        return re.sub(r"/\*.*?\*/", "", self.code)
+
+
 class Parser:
     def __init__(self):
         self.tokens = None
 
-    def parseExpression(self):
-        symbols = ["PLUS", "MINUS", "MULT", "DIV"]
+    def parseTerm(self):
+        symbols = ["MULT", "DIV"]
 
         t = self.tokens.returnNextToken()
         if t.type == "INT":
             resultado = t.value
             t = self.tokens.returnNextToken()
             while t.type in symbols:
-                if t.type == "PLUS":
-                    t = self.tokens.returnNextToken()
-                    if t.type == "INT":
-                        resultado += t.value
-                    else:
-                        raise ValueError("Erro")
-                elif t.type == "MINUS":
-                    t = self.tokens.returnNextToken()
-                    if t.type == "INT":
-                        resultado -= t.value
-                    else:
-                        raise ValueError("Erro")
-                elif t.type == "MULT":
+                if t.type == "MULT":
                     t = self.tokens.returnNextToken()
                     if t.type == "INT":
                         resultado *= t.value
                     else:
-                        raise ValueError("Erro")
+                        continue
                 elif t.type == "DIV":
                     t = self.tokens.returnNextToken()
                     if t.type == "INT":
                         resultado /= t.value
                     else:
-                        raise ValueError("Erro")
-                else:
-                    raise ValueError("Erro")
+                        continue
                 t = self.tokens.returnNextToken()
-            if t.type == "EOF":
-                return int(resultado)
+            nextToken = t
+            return int(resultado), nextToken
+        else:
+            raise ValueError("Erro")
+
+    def parseExpression(self):
+        symbols = ["PLUS", "MINUS"]
+
+        resultTerm, token = self.parseTerm()
+        resultado = resultTerm
+        while token.type in symbols:
+            if token.type == "PLUS":
+                resultTerm, token = self.parseTerm()
+                resultado += resultTerm
+            elif token.type == "MINUS":
+                resultTerm, token = self.parseTerm()
+                resultado -= resultTerm
             else:
                 raise ValueError("Erro")
+        if token.type == "EOF":
+            return int(resultado)
         else:
             raise ValueError("Erro")
 
     def run(self, code):
+        code = PrePro(code).filter()
         self.tokens = Tokenizer(code)
         self.tokens.tokenize()
         print(self.parseExpression())

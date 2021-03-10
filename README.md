@@ -1,6 +1,6 @@
 ### Projeto Compilador, Lógica da Computação, 7°Semestre, INSPER 2021.1
 
-v1.0
+v1.1
 
 ```python main.py '1+2'``` 
 
@@ -15,3 +15,6 @@ v1.0
 ```python main.py '2 + 3 * 5'```
 
 ![DiagramaSintatico](DiagramaSintatico.png)
+
+![EBNF](EBNF.png)
+
