@@ -39,7 +39,7 @@ class Tokenizer:
                 elif i == "/":
                     self.tokens.append(Token("DIV", "/"))
             else:
-                raise ValueError("Erro")
+                raise ValueError("Found invalid character in code")
 
         # whenever the loop ends, we must add the last number to the tokens:
         if number != "":
@@ -78,18 +78,24 @@ class Parser:
                     if t.type == "INT":
                         resultado *= t.value
                     else:
-                        raise ValueError("Erro")
+                        raise ValueError(
+                            f"Expected INT to perform multiplication, but received {t.type}"
+                        )
                 elif t.type == "DIV":
                     t = self.tokens.returnNextToken()
                     if t.type == "INT":
                         resultado /= t.value
                     else:
-                        raise ValueError("Erro")
+                        raise ValueError(
+                            f"Expected INT to perform division, but received {t.type}"
+                        )
                 t = self.tokens.returnNextToken()
             nextToken = t
             return int(resultado), nextToken
         else:
-            raise ValueError("Erro")
+            raise ValueError(
+                f"On parseTerm(), first token type must be INT, but received {t.type}"
+            )
 
     def parseExpression(self):
         symbols = ["PLUS", "MINUS"]
@@ -104,11 +110,11 @@ class Parser:
                 resultTerm, token = self.parseTerm()
                 resultado -= resultTerm
             else:
-                raise ValueError("Erro")
+                raise ValueError("Error: it never should reach this")
         if token.type == "EOF":
             return int(resultado)
         else:
-            raise ValueError("Erro")
+            raise ValueError("Could not reach end of string")
 
     def run(self, code):
         code = PrePro(code).filter()
