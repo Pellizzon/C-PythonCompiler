@@ -30,7 +30,7 @@
 
 ```EXPRESSION = NUMBER, {("+" | "-" | "*" | "/"), NUMBER}, COMMENT ;```
 
-```COMMENT = [(/*), CHARACTER, {CHARACTER} , (*/)] ;```
+```COMMENT = [("/", "*"), CHARACTER, {CHARACTER} , ("*", "/")] ;```
 
 ```NUMBER = DIGIT, {DIGIT} ;```
 
