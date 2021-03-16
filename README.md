@@ -28,7 +28,9 @@
     <img src="EBNF.png" width="40%">
 </p>
 
-```EXPRESSION = NUMBER, {("+" | "-" | "*" | "/"), NUMBER} ;```
+```EXPRESSION = TERM, {("+" | "-"), TERM} ;```
+
+```TERM = NUMBER, {("*" | "/"), NUMBER} ;```
 
 ```NUMBER = DIGIT, {DIGIT} ;```
 
