@@ -134,7 +134,6 @@ class Parser:
 
     def parse(self):
         resultado = self.parseExpression()
-        return int(resultado)
         if self.tokens.actual.type == "EOF":
             return int(resultado)
         else:
