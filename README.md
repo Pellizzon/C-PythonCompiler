@@ -2,11 +2,7 @@
 
 ## Lógica da Computação, 7°Semestre, INSPER 2021.1
 
-## v1.1.X
-
-```python main.py '1+2'``` 
-
-```python main.py '789 +345 - 123'```
+## v1.2.X
 
 ```python main.py '4/2+3'```
 
@@ -28,9 +24,11 @@
     <img src="EBNF.png" width="40%">
 </p>
 
-```EXPRESSION = TERM, {("+" | "-"), TERM} ;```
+```EXPRESSION = TERM, { ("+" | "-"), TERM } ;```
 
-```TERM = NUMBER, {("*" | "/"), NUMBER} ;```
+```TERM = FACTOR, { ("*" | "/"), FACTOR } ;```
+
+```FACTOR = ("+" | "-"), FACTOR | "(", EXPRESSION, ")" | NUMBER ;```
 
 ```NUMBER = DIGIT, {DIGIT} ;```
 
