@@ -98,6 +98,8 @@ class Parser:
                 return exp
             else:
                 raise ValueError("Could not close parenthesis")
+        else:
+            raise ValueError("Cannot parse Factor")
 
     def parseTerm(self):
         symbols = ["MULT", "DIV"]
@@ -112,6 +114,8 @@ class Parser:
             elif self.tokens.actual.type == "DIV":
                 factor = self.parseFactor()
                 resultado /= factor
+            else:
+                raise ValueError("Could not complete parseTerm")
             self.tokens.nextToken()
         return int(resultado)
 
