@@ -6,23 +6,23 @@
 
 Sem erros:
 
->> python main.py '(3 + 2) /5'
+> python main.py '(3 + 2) /5'
 
->> python main.py '--77'
+> python main.py '--77'
 
->> python main.py '+--++3'
+> python main.py '+--++3'
 
->> python main.py '3 - -2/4'
+> python main.py '3 - -2/4'
 
->> python main.py '4/(1+1)*2'
+> python main.py '4/(1+1)*2'
 
 Com erros:
 
->> python main.py '(2*2'
+> python main.py '(2*2'
 
->> python main.py '(3-(8)'
+> python main.py '(3-(8)'
 
->> python main.py '3+2)'
+> python main.py '3+2)'
 
 
 ### Diagrama Sintático   
