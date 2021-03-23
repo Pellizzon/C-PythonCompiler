@@ -64,7 +64,7 @@ class PrePro:
         self.code = initCode
 
     def filter(self):
-        return re.sub(r"/\*.*?\*/", "", self.code)
+        return re.sub(r"/\*.*?\*/", " ", self.code)
 
     def check_PAR_balance(self):
         stack = []
