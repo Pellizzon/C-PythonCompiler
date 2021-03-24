@@ -1,6 +1,7 @@
 from components.preprocessor import PrePro
 from components.token import Token
 from components.tokenizer import Tokenizer
+from components.node import BinOp, IntVal, UnOp
 
 
 class Parser:
@@ -10,11 +11,11 @@ class Parser:
     def parseFactor(self):
         self.tokens.nextToken()
         if self.tokens.actual.type == "INT":
-            return self.tokens.actual.value
+            return IntVal(self.tokens.actual.value)
         elif self.tokens.actual.type == "PLUS":
-            return self.parseFactor()
+            return UnOp("PLUS", [self.parseFactor()])
         elif self.tokens.actual.type == "MINUS":
-            return -self.parseFactor()
+            return UnOp("MINUS", [self.parseFactor()])
         elif self.tokens.actual.type == "LPAR":
             exp = self.parseExpression()
             if self.tokens.actual.type == "RPAR":
@@ -27,20 +28,19 @@ class Parser:
     def parseTerm(self):
         symbols = ["MULT", "DIV"]
 
-        factor = self.parseFactor()
-        resultado = factor
+        resultado = self.parseFactor()
         self.tokens.nextToken()
         while self.tokens.actual.type in symbols:
             if self.tokens.actual.type == "MULT":
                 factor = self.parseFactor()
-                resultado *= factor
+                resultado = BinOp("MULT", [resultado, factor])
             elif self.tokens.actual.type == "DIV":
                 factor = self.parseFactor()
-                resultado /= factor
+                resultado = BinOp("DIV", [resultado, factor])
             else:
                 raise ValueError("Could not complete parseTerm")
             self.tokens.nextToken()
-        return int(resultado)
+        return resultado
 
     def parseExpression(self):
         symbols = ["PLUS", "MINUS"]
@@ -50,19 +50,19 @@ class Parser:
         while self.tokens.actual.type in symbols:
             if self.tokens.actual.type == "PLUS":
                 resultTerm = self.parseTerm()
-                resultado += resultTerm
+                resultado = BinOp("PLUS", [resultado, resultTerm])
             elif self.tokens.actual.type == "MINUS":
                 resultTerm = self.parseTerm()
-                resultado -= resultTerm
+                resultado = BinOp("MINUS", [resultado, resultTerm])
             else:
                 raise ValueError("Error: it never should reach this")
 
-        return int(resultado)
+        return resultado
 
     def parse(self):
         resultado = self.parseExpression()
         if self.tokens.actual.type == "EOF":
-            return int(resultado)
+            return resultado
         else:
             raise ValueError("Did not reach EOF")
 
@@ -71,4 +71,4 @@ class Parser:
         PrePro(code).check_PAR_balance()
         self.tokens = Tokenizer(code)
         self.tokens.tokenize()
-        print(self.parse())
+        return self.parse()

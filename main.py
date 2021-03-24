@@ -3,4 +3,11 @@ from components.parser import Parser
 
 if __name__ == "__main__":
 
-    Parser().run(sys.argv[1])
+    if not sys.argv[1].endswith(".c"):
+        raise ValueError("Input file must have '.c' extension")
+
+    with open(f"{sys.argv[1]}", "r") as f:
+        inputData = f.read()
+
+    result = Parser().run(inputData)
+    print(result.Evaluate())
