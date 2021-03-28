@@ -7,7 +7,7 @@
 > Executar testes
     
     Windows:
-    >> Bash executeTests.sh
+    >> bash executeTests.sh
 
     Linux:
     >> ./executeTests.sh
