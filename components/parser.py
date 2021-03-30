@@ -10,13 +10,12 @@ class Parser:
 
     def parseFactor(self):
         self.tokens.nextToken()
-        if self.tokens.actual.type == "INT":
+        tokenType = self.tokens.actual.type
+        if tokenType == "INT":
             return IntVal(self.tokens.actual.value)
-        elif self.tokens.actual.type == "PLUS":
-            return UnOp("PLUS", [self.parseFactor()])
-        elif self.tokens.actual.type == "MINUS":
-            return UnOp("MINUS", [self.parseFactor()])
-        elif self.tokens.actual.type == "LPAR":
+        elif tokenType in ["PLUS", "MINUS"]:
+            return UnOp(tokenType, [self.parseFactor()])
+        elif tokenType == "LPAR":
             exp = self.parseExpression()
             if self.tokens.actual.type == "RPAR":
                 return exp
@@ -31,12 +30,10 @@ class Parser:
         resultado = self.parseFactor()
         self.tokens.nextToken()
         while self.tokens.actual.type in symbols:
-            if self.tokens.actual.type == "MULT":
+            if self.tokens.actual.type in ["MULT", "DIV"]:
+                currentToken = self.tokens.actual.type
                 factor = self.parseFactor()
-                resultado = BinOp("MULT", [resultado, factor])
-            elif self.tokens.actual.type == "DIV":
-                factor = self.parseFactor()
-                resultado = BinOp("DIV", [resultado, factor])
+                resultado = BinOp(currentToken, [resultado, factor])
             else:
                 raise ValueError("Could not complete parseTerm")
             self.tokens.nextToken()
@@ -48,12 +45,10 @@ class Parser:
         resultTerm = self.parseTerm()
         resultado = resultTerm
         while self.tokens.actual.type in symbols:
-            if self.tokens.actual.type == "PLUS":
+            if self.tokens.actual.type in ["PLUS", "MINUS"]:
+                currentToken = self.tokens.actual.type
                 resultTerm = self.parseTerm()
-                resultado = BinOp("PLUS", [resultado, resultTerm])
-            elif self.tokens.actual.type == "MINUS":
-                resultTerm = self.parseTerm()
-                resultado = BinOp("MINUS", [resultado, resultTerm])
+                resultado = BinOp(currentToken, [resultado, resultTerm])
             else:
                 raise ValueError("Error: it never should reach this")
 
