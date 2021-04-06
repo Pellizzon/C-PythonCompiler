@@ -4,14 +4,6 @@
 
 ## v2.0.0
 
-> Executar testes
-    
-    Windows:
-    >> bash executeTests.sh
-
-    Linux:
-    >> ./executeTests.sh
-
 ### Diagrama Sintático   
 
 <p align="center">
