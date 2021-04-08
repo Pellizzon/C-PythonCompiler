@@ -17,8 +17,6 @@ class Tokenizer:
             "\n",
             "(",
             ")",
-            "{",
-            "}",
             "=",
             ";",
         ]
@@ -64,10 +62,6 @@ class Tokenizer:
                     self.tokens.append(Token("LPAR", "("))
                 elif self.origin[i] == ")":
                     self.tokens.append(Token("RPAR", ")"))
-                elif self.origin[i] == "{":
-                    self.tokens.append(Token("LBRA", "{"))
-                elif self.origin[i] == "}":
-                    self.tokens.append(Token("RBRA", "}"))
                 elif self.origin[i] == "=":
                     self.tokens.append(Token("EQ", "="))
                 elif self.origin[i] == ";":
