@@ -68,7 +68,9 @@ class Tokenizer:
                     self.tokens.append(Token("COL", ";"))
                 i += 1
             else:
-                raise ValueError("Found invalid character in code")
+                if self.origin[i] == "_":
+                    raise ValueError(f"Variables cannot start with '{self.origin[i]}'")
+                raise ValueError(f"Found invalid character in code '{self.origin[i]}'")
 
         # it's needed to add the EOF Token:
         self.tokens.append(Token("EOF", None))
