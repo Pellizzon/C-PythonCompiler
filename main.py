@@ -9,5 +9,4 @@ if __name__ == "__main__":
     with open(f"{sys.argv[1]}", "r") as f:
         inputData = f.read()
 
-    result = Parser().run(inputData)
-    print(result.Evaluate())
+    Parser().run(inputData).Evaluate()

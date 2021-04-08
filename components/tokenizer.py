@@ -7,45 +7,77 @@ class Tokenizer:
         self.position = 0
         self.tokens = []
         self.actual = None
+        # " " && "\n" are allowed, however they are ignored
+        self.allowed_symbols = [
+            "+",
+            "-",
+            "*",
+            "/",
+            " ",
+            "\n",
+            "(",
+            ")",
+            "{",
+            "}",
+            "=",
+            ";",
+        ]
+
+    def findCompleteIdentifier(self, currentPos):
+        rest = ""
+        for i in self.origin[currentPos:]:
+            if i not in self.allowed_symbols:
+                rest += i
+            else:
+                break
+        return rest
 
     def tokenize(self):
-        # " " is allowed, however the compiler ignores it
-        allowed_symbols = ["+", "-", "*", "/", " ", "(", ")"]
-
         number = ""
-        for i in self.origin:
-            if i.isdigit():
-                number += i
-                continue
-            elif i in allowed_symbols:
-                # whenever we find an operator, we add the number;
-                # it was already found
+        i = 0
+        while i < len(self.origin):
+            if self.origin[i].isalpha():
+                identifier = self.findCompleteIdentifier(i)
+                if identifier == "println":
+                    self.tokens.append(Token("PRINT", identifier))
+                else:
+                    self.tokens.append(Token("IDENTIFIER", identifier))
+                i += len(identifier)
+
+            elif self.origin[i].isdigit():
+                number += self.origin[i]
+                i += 1
+
+            elif self.origin[i] in self.allowed_symbols:
                 if number != "":
                     self.tokens.append(Token("INT", int(number)))
                     number = ""
-                if i == "+":
+                if self.origin[i] == "+":
                     self.tokens.append(Token("PLUS", "+"))
-                elif i == "-":
+                elif self.origin[i] == "-":
                     self.tokens.append(Token("MINUS", "-"))
-                elif i == "*":
+                elif self.origin[i] == "*":
                     self.tokens.append(Token("MULT", "*"))
-                elif i == "/":
+                elif self.origin[i] == "/":
                     self.tokens.append(Token("DIV", "/"))
-                elif i == "(":
+                elif self.origin[i] == "(":
                     self.tokens.append(Token("LPAR", "("))
-                elif i == ")":
+                elif self.origin[i] == ")":
                     self.tokens.append(Token("RPAR", ")"))
+                elif self.origin[i] == "{":
+                    self.tokens.append(Token("LBRA", "{"))
+                elif self.origin[i] == "}":
+                    self.tokens.append(Token("RBRA", "}"))
+                elif self.origin[i] == "=":
+                    self.tokens.append(Token("EQ", "="))
+                elif self.origin[i] == ";":
+                    self.tokens.append(Token("COL", ";"))
+                i += 1
             else:
                 raise ValueError("Found invalid character in code")
 
-        # whenever the loop ends, we must add the last number to the tokens:
-        if number != "":
-            self.tokens.append(Token("INT", int(number)))
-        # it's also needed to add the EOF Token:
+        # it's needed to add the EOF Token:
         self.tokens.append(Token("EOF", None))
-
-        # for i in self.tokens:
-        #     print(i.type, i.value)
 
     def nextToken(self):
         self.actual = self.tokens[self.position]
