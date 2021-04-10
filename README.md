@@ -7,7 +7,7 @@
 ### Diagrama Sintático   
 
 <p align="center">
-    <img src="DiagramaSintatico.png">
+    <img src="DiagramaSintatico.jpeg">
 </p>
 
 ### EBNF

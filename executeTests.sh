@@ -1,23 +1,22 @@
 #!/bin/bash
 R=(
-    '6' 
-    'Traceback()' 
-    '' 
-    '' 
-    '18' 
-    'Traceback()' 
-    '12' 
+    '6'             #00
+    'Traceback()'   #01
+    ''              #02
+    ''              #03
+    '18'            #04
+    'Traceback()'   #05
+    '12'            #06
     '3
 9
 4'
-    ''
-    ''
-    '' 
-    '' 
-    '' 
-    '' 
-    '' 
-    '')
+    'Traceback()'   #08
+    ''              #09
+    'Traceback()'   #10
+    'Traceback()'   #11
+    'Traceback()'   #12 
+    'Traceback()'   #13
+    )
 files=(./tests/*)
 N_tests=${#R[@]}
 
