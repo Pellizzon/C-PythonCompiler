@@ -1,7 +1,17 @@
 from components.preprocessor import PrePro
 from components.token import Token
 from components.tokenizer import Tokenizer
-from components.node import BinOp, IntVal, UnOp
+from components.node import (
+    BinOp,
+    IntVal,
+    UnOp,
+    Identifier,
+    Assign,
+    NoOp,
+    Block,
+    Print,
+)
+from components.symbolTable import SymbolTable
 
 
 class Parser:
@@ -21,15 +31,15 @@ class Parser:
                 return exp
             else:
                 raise ValueError("Could not close parenthesis")
+        elif tokenType == "IDENTIFIER":
+            return Identifier(self.tokens.actual.value)
         else:
             raise ValueError("Cannot parse Factor")
 
     def parseTerm(self):
-        symbols = ["MULT", "DIV"]
-
         resultado = self.parseFactor()
         self.tokens.nextToken()
-        while self.tokens.actual.type in symbols:
+        while self.tokens.actual.type in ["MULT", "DIV"]:
             if self.tokens.actual.type in ["MULT", "DIV"]:
                 currentToken = self.tokens.actual.type
                 factor = self.parseFactor()
@@ -40,30 +50,66 @@ class Parser:
         return resultado
 
     def parseExpression(self):
-        symbols = ["PLUS", "MINUS"]
-
-        resultTerm = self.parseTerm()
-        resultado = resultTerm
-        while self.tokens.actual.type in symbols:
+        result = self.parseTerm()
+        while self.tokens.actual.type in ["PLUS", "MINUS"]:
             if self.tokens.actual.type in ["PLUS", "MINUS"]:
                 currentToken = self.tokens.actual.type
                 resultTerm = self.parseTerm()
-                resultado = BinOp(currentToken, [resultado, resultTerm])
+                result = BinOp(currentToken, [result, resultTerm])
             else:
                 raise ValueError("Error: it never should reach this")
+        return result
 
-        return resultado
+    def parseCommand(self):
+        if self.tokens.actual.type == "IDENTIFIER":
+            identifier = self.tokens.actual.value
+            self.tokens.nextToken()
+            if self.tokens.actual.type != "EQ":
+                raise ValueError(
+                    f"Variable assignments must be followed by '=', but got '{self.tokens.actual.value}'"
+                )
+            result = Assign(identifier, [self.parseExpression()])
 
-    def parse(self):
-        resultado = self.parseExpression()
-        if self.tokens.actual.type == "EOF":
-            return resultado
+        elif self.tokens.actual.type == "PRINT":
+            self.tokens.nextToken()
+            if self.tokens.actual.type != "LPAR":
+                raise ValueError(
+                    f"println must be followed by '(', got '{self.tokens.actual.value}'"
+                )
+            result = Print(None, [self.parseExpression()])
+            if self.tokens.actual.type != "RPAR":
+                raise ValueError(
+                    f"println must end with ')', got '{self.tokens.actual.value}'"
+                )
+            self.tokens.nextToken()
+
         else:
-            raise ValueError("Did not reach EOF")
+            result = NoOp(None)
+            # cases like +1+2*2; enter here
+            # they would raise errors on the next if ";".
+            # just to manage errors more precisely, some will be treated here
+            if (str(self.tokens.actual.value) in "()+-*/=") or (
+                self.tokens.actual.type == "INT"
+            ):
+                raise ValueError("Commands must be Assignments or Prints")
+
+        if (self.tokens.actual.value) != ";":
+            raise ValueError("Commands must end with ';'")
+
+        self.tokens.nextToken()
+        return result
+
+    def parseBlock(self):
+        executedCommands = []
+        self.tokens.nextToken()
+        while self.tokens.actual.type != "EOF":
+            executedCommands += [self.parseCommand()]
+
+        return Block(None, executedCommands)
 
     def run(self, code):
         code = PrePro(code).filter()
         PrePro(code).check_PAR_balance()
         self.tokens = Tokenizer(code)
         self.tokens.tokenize()
-        return self.parse()
+        return self.parseBlock()
