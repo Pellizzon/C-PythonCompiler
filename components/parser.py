@@ -66,7 +66,7 @@ class Parser:
             self.tokens.nextToken()
             if self.tokens.actual.type != "EQ":
                 raise ValueError(
-                    f"Assigning a variable must receive an '=', but got {self.tokens.actual.value}"
+                    f"Variable assignments must be followed by '=', but got '{self.tokens.actual.value}'"
                 )
             result = Assign(identifier, [self.parseExpression()])
 
@@ -74,20 +74,27 @@ class Parser:
             self.tokens.nextToken()
             if self.tokens.actual.type != "LPAR":
                 raise ValueError(
-                    f"println must be followed by '(', got {self.tokens.actual.value}"
+                    f"println must be followed by '(', got '{self.tokens.actual.value}'"
                 )
             result = Print(None, [self.parseExpression()])
             if self.tokens.actual.type != "RPAR":
                 raise ValueError(
-                    f"println must end with ')', got {self.tokens.actual.value}"
+                    f"println must end with ')', got '{self.tokens.actual.value}'"
                 )
             self.tokens.nextToken()
 
         else:
             result = NoOp(None)
+            # cases like +1+2*2; enter here
+            # they would raise errors on the next if ";".
+            # just to manage errors more precisely, some will be treated here
+            if (str(self.tokens.actual.value) in "()+-*/=") or (
+                self.tokens.actual.type == "INT"
+            ):
+                raise ValueError("Commands must be Assignments or Prints")
 
         if (self.tokens.actual.value) != ";":
-            raise ValueError("Assignments must end with ';'")
+            raise ValueError("Commands must end with ';'")
 
         self.tokens.nextToken()
         return result
