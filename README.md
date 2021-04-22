@@ -2,7 +2,7 @@
 
 ## Lógica da Computação, 7°Semestre, INSPER 2021.1
 
-## v2.0.0
+## v2.1.0
 
 ### Diagrama Sintático   
 
