@@ -13,6 +13,7 @@ from components.node import (
     Read,
     LogicalOp,
     While,
+    If,
 )
 from components.symbolTable import SymbolTable
 
@@ -163,8 +164,29 @@ class Parser:
             self.tokens.nextToken()
             result = While(None, [orExpr, self.parseCommand()])
 
-        elif self.tokens.actual.value == "{":
+        elif self.tokens.actual.type == "IF":
+            self.tokens.nextToken()
+            if self.tokens.actual.type != "LPAR":
+                raise ValueError(
+                    f"println must be followed by '(', got '{self.tokens.actual.value}'"
+                )
+            orExpr = self.parseOrExpr()
+            if self.tokens.actual.type != "RPAR":
+                raise ValueError(
+                    f"println must end with ')', got '{self.tokens.actual.value}'"
+                )
+            self.tokens.nextToken()
+            trueBlock = self.parseCommand()
+            result = If(None, [orExpr, trueBlock])
             # print(self.tokens.actual.type, self.tokens.actual.value)
+            if self.tokens.actual.type == "ELSE":
+                self.tokens.nextToken()
+                falseBlock = self.parseCommand()
+                result = If(None, [orExpr, trueBlock, falseBlock])
+            else:
+                pass
+
+        elif self.tokens.actual.value == "{":
             result = self.parseBlock()
             self.tokens.nextToken()
 

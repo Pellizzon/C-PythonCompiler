@@ -109,6 +109,17 @@ class While(Node):
             self.children[1].Evaluate()
 
 
+class If(Node):
+    def Evaluate(self):
+        # conditional child
+        if self.children[0].Evaluate():
+            # block or command child 1
+            self.children[1].Evaluate()
+        else:
+            # block or command child 2
+            self.children[2].Evaluate()
+
+
 # prints a value
 # composed by identifiers and/or expressions
 class Print(Node):
