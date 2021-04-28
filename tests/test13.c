@@ -1,2 +1,3 @@
-/*isso deve passar*/
-var 12;
+{ /*isso deve passar*/
+    var 12;
+}

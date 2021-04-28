@@ -1,2 +1,4 @@
-printlnn = 2;
-println(printlnn);
+{
+    printlnn = 2;
+    println(printlnn);
+}
