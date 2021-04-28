@@ -1,19 +1,25 @@
 {
-    i = readln() + 3;
-    if (i < 11)
+    i = 0;
+    while (i < 4)
     {
-        x = 2;
-        println(10);
-    }
-    else
-    {
-        while (i > 1)
+        x = readln();
+        if (x > 2 && i > 1)
         {
-            i = i - 1;
-            println(i);
+            println(x);
         }
-        x = 2;
+        else if (!i)
+        {
+            println(i);
+            x = x + --!i;
+            println(x);
+        }
+        else if (!!x || !x)
+        {
+            println(!!x);
+            x = x + x + x;
+            println(x);
+        }
+        i = i + 1;
+        println(i);
     }
-
-    println(x);
 }

@@ -127,8 +127,7 @@ class Parser:
                 raise ValueError(
                     f"Commands must end with ';', but got '{self.tokens.actual.value}'"
                 )
-            else:
-                self.tokens.nextToken()
+            self.tokens.nextToken()
 
         elif self.tokens.actual.type == "PRINT":
             self.tokens.nextToken()
@@ -147,8 +146,8 @@ class Parser:
                 raise ValueError(
                     f"Commands must end with ';', but got '{self.tokens.actual.value}'"
                 )
-            else:
-                self.tokens.nextToken()
+
+            self.tokens.nextToken()
 
         elif self.tokens.actual.type == "WHILE":
             self.tokens.nextToken()
@@ -178,7 +177,7 @@ class Parser:
             self.tokens.nextToken()
             trueBlock = self.parseCommand()
             result = If(None, [orExpr, trueBlock])
-            # print(self.tokens.actual.type, self.tokens.actual.value)
+
             if self.tokens.actual.type == "ELSE":
                 self.tokens.nextToken()
                 falseBlock = self.parseCommand()
@@ -198,14 +197,15 @@ class Parser:
             if (str(self.tokens.actual.value) in "()+-*/=") or (
                 self.tokens.actual.type == "INT"
             ):
-                raise ValueError("Commands must be Assignments or Prints")
+                raise ValueError(
+                    "Commands must be Assignments or Prints, Ifs or Whiles"
+                )
 
             if (self.tokens.actual.value) != ";":
                 raise ValueError(
                     f"Commands must end with ';', but got '{self.tokens.actual.value}'"
                 )
-            else:
-                self.tokens.nextToken()
+            self.tokens.nextToken()
 
         return result
 
@@ -224,11 +224,11 @@ class Parser:
         PrePro(code).check_PAR_balance()
         self.tokens = Tokenizer(code)
         self.tokens.tokenize()
+
         self.tokens.nextToken()
         result = self.parseBlock()
-        # print(self.tokens.actual.type, self.tokens.actual.value)
         self.tokens.nextToken()
-        # print(self.tokens.actual.type, self.tokens.actual.value)
+
         if self.tokens.actual.type != "EOF":
             raise ValueError("Did not reach EOF")
         return result

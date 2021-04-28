@@ -2,12 +2,16 @@
 
 ## Lógica da Computação, 7°Semestre, INSPER 2021.1
 
-## v2.1.0
+## v2.2.0
 
 ### Diagrama Sintático   
 
 <p align="center">
-    <img src="DiagramaSintatico.jpeg">
+    <img src="DS1.png">
+</p>
+
+<p align="center">
+    <img src="DS2.png">
 </p>
 
 ### EBNF
@@ -17,13 +21,23 @@
 </p>
 
 ```
-BLOCK = { COMMAND } ;
-COMMAND = ( λ | ASSIGNMENT | PRINT), ";" ;
-ASSIGNMENT = IDENTIFIER, "=", EXPRESSION ;
-PRINT = "println", "(", EXPRESSION, ")" ;
+BLOCK = { "{", COMMAND, "}" } ;
+COMMAND = ( λ | ASSIGNMENT | PRINT | READ), ";" | BLOCK | WHILESTMT | IFSMT;
+ASSIGNMENT = IDENTIFIER, "=", OREXPR ;
+PRINT = "println", "(", OREXPR, ")" ;
+READ = "readln", "(", ")";
+
+IFSTMT = "if", "(", OREXPR, ")", COMMAND ["else", COMMAND] ;
+WHILESTMT = "while", "(", OREXPR, ")", COMMAND ;
+
+OREXPR = ANDEXPR ["||", ANDEXPR] ;
+ANDEXPR = EQEXPR ["&&", EQEXPR] ;
+EQEXPR = RELEXPR ["==", EQEXPR] ;
+RELEXPR = EXPRESSION [(">" | "<"), EXPRESSION] ;
+
 EXPRESSION = TERM, { ("+" | "-"), TERM } ;
 TERM = FACTOR, { ("*" | "/"), FACTOR } ;
-FACTOR = (("+" | "-"), FACTOR) | NUMBER | "(", EXPRESSION, ")" | IDENTIFIER ;
+FACTOR = (("+" | "-"| "!"), FACTOR) | NUMBER | "(", OREXPR, ")" | IDENTIFIER | READ;
 IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
 NUMBER = DIGIT, { DIGIT } ;
 LETTER = ( a | ... | z | A | ... | Z ) ;
