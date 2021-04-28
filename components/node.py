@@ -33,6 +33,29 @@ class BinOp(Node):
         return int(evaluate)
 
 
+# Deals with Logical operations,
+# must have two children
+class LogicalOp(Node):
+    def Evaluate(self):
+        firstChildEval = self.children[0].Evaluate()
+        secondChildEval = self.children[1].Evaluate()
+
+        if self.value == "LESSTHAN":
+            evaluate = firstChildEval < secondChildEval
+        elif self.value == "BIGGERTHAN":
+            evaluate = firstChildEval > secondChildEval
+        elif self.value == "EQOP":
+            evaluate = firstChildEval == secondChildEval
+        elif self.value == "AND":
+            evaluate = firstChildEval and secondChildEval
+        elif self.value == "OR":
+            evaluate = firstChildEval or secondChildEval
+        else:
+            raise ValueError("Could not evaluate LogicalOp")
+
+        return int(evaluate)
+
+
 # Deals with unary operations,
 # must have one child
 class UnOp(Node):
@@ -43,6 +66,8 @@ class UnOp(Node):
             evaluate = +childEval
         elif self.value == "MINUS":
             evaluate = -childEval
+        elif self.value == "NOT":
+            evaluate = not childEval
         else:
             raise ValueError("Could not evaluate UnOp")
 
@@ -76,11 +101,26 @@ class Identifier(Node):
         return symbolTable.get(self.value)
 
 
+class While(Node):
+    def Evaluate(self):
+        # conditional child
+        while self.children[0].Evaluate():
+            # block or command child
+            self.children[1].Evaluate()
+
+
 # prints a value
 # composed by identifiers and/or expressions
 class Print(Node):
     def Evaluate(self):
         print(self.children[0].Evaluate())
+
+
+# receives an user input
+# Value and Children are not needed
+class Read(Node):
+    def Evaluate(self):
+        return int(input("Insert a number: "))
 
 
 # A Block can have many instructions. Each line of code
