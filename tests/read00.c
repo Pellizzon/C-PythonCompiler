@@ -2,7 +2,7 @@
     i = 0;
     while (i < 4)
     {
-        x = 4 + 2;
+        x = readln();
         if (x > 2 && i > 1)
         {
             println(x);
