@@ -138,7 +138,7 @@ class Print(Node):
 # Value and Children are not needed
 class Read(Node):
     def Evaluate(self):
-        return int(input("Insert a number: "))
+        return int(input())
 
 
 # A Block can have many instructions. Each line of code
