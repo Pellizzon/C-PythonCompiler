@@ -29,7 +29,7 @@ class Parser:
         elif self.tokens.actual.type in ["PLUS", "MINUS", "NOT"]:
             return UnOp(self.tokens.actual.type, [self.parseFactor()])
         elif self.tokens.actual.type == "LPAR":
-            exp = self.parseExpression()
+            exp = self.parseOrExpr()
             if self.tokens.actual.type == "RPAR":
                 return exp
             else:

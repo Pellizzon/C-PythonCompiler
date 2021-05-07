@@ -68,6 +68,10 @@ class Tokenizer:
                 i += 1
 
             elif self.origin[i : i + 2] in self.double_allowed_symbols:
+                if number != "":
+                    self.tokens.append(Token("INT", int(number)))
+                    number = ""
+
                 if self.origin[i : i + 2] == "&&":
                     self.tokens.append(Token("AND", "&&"))
                 elif self.origin[i : i + 2] == "==":

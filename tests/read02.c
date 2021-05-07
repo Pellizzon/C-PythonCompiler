@@ -1,4 +1,0 @@
-{
-    x = readln();
-    println(x);
-}
