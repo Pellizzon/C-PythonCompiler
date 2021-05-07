@@ -2,6 +2,9 @@
 
 ## Lógica da Computação, 7°Semestre, INSPER 2021.1
 
+## Status:
+![git status](http://3.129.230.99/svg/Pellizzon/LogicaDaComputacao/)
+
 ## v2.2.0
 
 ### Diagrama Sintático   
