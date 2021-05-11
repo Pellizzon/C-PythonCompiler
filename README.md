@@ -24,7 +24,7 @@
 </p>
 
 ```
-BLOCK = { "{", COMMAND, "}" } ;
+BLOCK = "{", { COMMAND, } "}" ;
 COMMAND = ( λ | ASSIGNMENT | PRINT | READ), ";" | BLOCK | WHILESTMT | IFSMT;
 ASSIGNMENT = IDENTIFIER, "=", OREXPR ;
 PRINT = "println", "(", OREXPR, ")" ;
