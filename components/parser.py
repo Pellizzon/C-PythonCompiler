@@ -31,15 +31,8 @@ class Parser:
             return IntVal(self.tokens.actual.value)
         elif self.tokens.actual.type == "BOOL":
             return BoolVal(self.tokens.actual.value)
-        elif self.tokens.actual.type == "QUOTATION_MARK":
-            self.tokens.nextToken()
-            if self.tokens.actual.type != "STRING":
-                raise ValueError("Quotation opened but string was not found")
-            stringValue = self.tokens.actual.value
-            self.tokens.nextToken()
-            if self.tokens.actual.type != "QUOTATION_MARK":
-                raise ValueError("Did not found quotation mark end")
-            return StringVal(stringValue)
+        elif self.tokens.actual.type == "STRING":
+            return StringVal(self.tokens.actual.value)
         elif self.tokens.actual.type in ["PLUS", "MINUS", "NOT"]:
             return UnOp(self.tokens.actual.type, [self.parseFactor()])
         elif self.tokens.actual.type == "LPAR":

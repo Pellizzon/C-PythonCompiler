@@ -122,14 +122,13 @@ class Tokenizer:
                 elif self.origin[i] == "=":
                     self.tokens.append(Token("EQUAL", "="))
                 elif self.origin[i] == '"':
-                    self.tokens.append(Token("QUOTATION_MARK", '"'))
                     i += 1
-                    whole_string = ""
+                    whole_string = '"'
                     while self.origin[i] != '"':
                         whole_string += self.origin[i]
                         i += 1
+                    whole_string += '"'
                     self.tokens.append(Token("STRING", whole_string))
-                    self.tokens.append(Token("QUOTATION_MARK", '"'))
                 i += 1
 
             else:

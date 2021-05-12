@@ -39,6 +39,9 @@ class BinOp(Node):
         else:
             raise ValueError("Could not evaluate BinOp")
 
+        if firstChildType == "TYPE_STRING" and secondChildType == "TYPE_STRING":
+            return (str(evaluate), "TYPE_STRING")
+
         return (int(evaluate), "TYPE_INT")
 
 
@@ -57,6 +60,14 @@ class LogicalOp(Node):
             raise ValueError(
                 f"Cannot handle operation between {firstChildType} and {secondChildType}"
             )
+        elif firstChildType == "TYPE_STRING" and secondChildType == "TYPE_STRING":
+            if self.value == "LESSTHAN":
+                evaluate = firstChildValue < secondChildValue
+            elif self.value == "BIGGERTHAN":
+                evaluate = firstChildValue > secondChildValue
+            elif self.value == "EQOP":
+                evaluate = firstChildValue == secondChildValue
+            return (int(bool(evaluate)), "TYPE_BOOL")
 
         firstChildValue = bool(firstChildValue)
         secondChildValue = bool(secondChildValue)
@@ -128,7 +139,6 @@ class Assign(Node):
         if symbolTable.contains(self.value):
             var_type = symbolTable.getType(self.value)
             childValue, _ = self.children[0].Evaluate()
-            # print(self.value, childValue, _)
             if var_type == "TYPE_BOOL":
                 symbolTable.set(self.value, (int(bool(childValue)), var_type))
             elif var_type == "TYPE_INT":
@@ -190,7 +200,7 @@ class Print(Node):
 # Value and Children are not needed
 class Read(Node):
     def Evaluate(self):
-        return int(input())
+        return (int(input()), "TYPE_INT")
 
 
 # A Block can have many instructions. Each line of code
