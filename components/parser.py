@@ -176,14 +176,11 @@ class Parser:
                 )
             self.tokens.nextToken()
             trueBlock = self.parseCommand()
-            result = If(None, [orExpr, trueBlock])
-
+            falseBlock = NoOp(None)
             if self.tokens.actual.type == "ELSE":
                 self.tokens.nextToken()
                 falseBlock = self.parseCommand()
-                result = If(None, [orExpr, trueBlock, falseBlock])
-            else:
-                pass
+            result = If(None, [orExpr, trueBlock, falseBlock])
 
         elif self.tokens.actual.value == "{":
             result = self.parseBlock()
