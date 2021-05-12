@@ -4,6 +4,7 @@ from components.tokenizer import Tokenizer
 from components.node import (
     BinOp,
     IntVal,
+    BoolVal,
     UnOp,
     Identifier,
     Assign,
@@ -14,6 +15,8 @@ from components.node import (
     LogicalOp,
     While,
     If,
+    Declare,
+    StringVal,
 )
 from components.symbolTable import SymbolTable
 
@@ -26,6 +29,17 @@ class Parser:
         self.tokens.nextToken()
         if self.tokens.actual.type == "INT":
             return IntVal(self.tokens.actual.value)
+        elif self.tokens.actual.type == "BOOL":
+            return BoolVal(self.tokens.actual.value)
+        elif self.tokens.actual.type == "QUOTATION_MARK":
+            self.tokens.nextToken()
+            if self.tokens.actual.type != "STRING":
+                raise ValueError("Quotation opened but string was not found")
+            stringValue = self.tokens.actual.value
+            self.tokens.nextToken()
+            if self.tokens.actual.type != "QUOTATION_MARK":
+                raise ValueError("Did not found quotation mark end")
+            return StringVal(stringValue)
         elif self.tokens.actual.type in ["PLUS", "MINUS", "NOT"]:
             return UnOp(self.tokens.actual.type, [self.parseFactor()])
         elif self.tokens.actual.type == "LPAR":
@@ -125,8 +139,23 @@ class Parser:
 
             if (self.tokens.actual.value) != ";":
                 raise ValueError(
-                    f"Commands must end with ';', but got '{self.tokens.actual.value}'"
+                    f"Assign commands must end with ';', but got '{self.tokens.actual.value}'"
                 )
+            self.tokens.nextToken()
+
+        elif self.tokens.actual.type in ["TYPE_INT", "TYPE_STRING", "TYPE_BOOL"]:
+            var_type = self.tokens.actual.type
+            self.tokens.nextToken()
+            if self.tokens.actual.type != "IDENTIFIER":
+                raise ValueError(f"Expected IDENTIFIER after {var_type} declaration.")
+            var_name = self.tokens.actual.value
+            result = Declare(var_name, [(None, var_type)])
+            self.tokens.nextToken()
+            if (self.tokens.actual.value) != ";":
+                raise ValueError(
+                    f"Declare commands must end with ';', but got '{self.tokens.actual.value}'"
+                )
+
             self.tokens.nextToken()
 
         elif self.tokens.actual.type == "PRINT":
@@ -144,7 +173,7 @@ class Parser:
 
             if (self.tokens.actual.value) != ";":
                 raise ValueError(
-                    f"Commands must end with ';', but got '{self.tokens.actual.value}'"
+                    f"Print commands must end with ';', but got '{self.tokens.actual.value}'"
                 )
 
             self.tokens.nextToken()

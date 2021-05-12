@@ -10,3 +10,15 @@ class SymbolTable:
             return self.symbols[key]
         else:
             raise ValueError(f"Tried to access inexistent variable '{key}'")
+
+    def contains(self, key):
+        if key in self.symbols:
+            return True
+        else:
+            return False
+
+    def getType(self, key):
+        if key in self.symbols:
+            return self.symbols[key][1]
+        else:
+            raise ValueError(f"Tried to access inexistent variable '{key}'")

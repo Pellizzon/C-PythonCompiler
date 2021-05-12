@@ -1,5 +1,11 @@
-{   
-    if (((1==1) || (1==1) || (1==1)) || ((1==0) && (1==0) && (1==0))){
-        println(1);
-    }
+{
+    int x;
+    bool y;
+    string z;
+    x = 1;
+    y = x || true;
+    z = "x:";
+    println(x + y);
+    println(z);
+    println(x + z); /* ERROR */
 }
