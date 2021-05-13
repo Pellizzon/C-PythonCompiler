@@ -61,13 +61,11 @@ class LogicalOp(Node):
                 f"Cannot handle operation between {firstChildType} and {secondChildType}"
             )
         elif firstChildType == "TYPE_STRING" and secondChildType == "TYPE_STRING":
-            if self.value == "LESSTHAN":
-                evaluate = firstChildValue < secondChildValue
-            elif self.value == "BIGGERTHAN":
-                evaluate = firstChildValue > secondChildValue
-            elif self.value == "EQOP":
+            if self.value == "EQOP":
                 evaluate = firstChildValue == secondChildValue
-            return (int(bool(evaluate)), "TYPE_BOOL")
+                return (int(bool(evaluate)), "TYPE_BOOL")
+            else:
+                raise ValueError(f"Operation {self.value} not allowed between strings")
 
         firstChildValue = bool(firstChildValue)
         secondChildValue = bool(secondChildValue)
