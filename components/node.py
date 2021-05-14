@@ -88,8 +88,8 @@ class UnOp(Node):
     def Evaluate(self):
         childValue, childType = self.children[0].Evaluate()
 
-        # if childType == "TYPE_STRING":
-        #     raise ValueError("Cannot handle unary operation with strings")
+        if childType == "TYPE_STRING":
+            raise ValueError("Cannot handle unary operation with strings")
 
         if self.value == "PLUS":
             evaluate = +childValue

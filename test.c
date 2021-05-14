@@ -7,5 +7,5 @@
         println(i);
     }
 
-    println(--"a");
+    println(!"a");
 }
