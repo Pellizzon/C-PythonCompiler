@@ -192,8 +192,10 @@ class Print(Node):
     def Evaluate(self):
         childValue, childType = self.children[0].Evaluate()
 
-        if childType in ["TYPE_INT", "TYPE_BOOL"]:
+        if childType == "TYPE_INT":
             print(childValue)
+        elif childType == "TYPE_BOOL":
+            print("true") if childValue == 1 else print("false")
         elif childType == "TYPE_STRING":
             print(childValue.replace('"', ""))
 
