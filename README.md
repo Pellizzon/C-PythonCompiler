@@ -5,7 +5,7 @@
 ## Status:
 ![git status](http://3.129.230.99/svg/Pellizzon/LogicaDaComputacao/)
 
-## v2.2.0
+## v2.3
 
 ### Diagrama Sintático   
 
