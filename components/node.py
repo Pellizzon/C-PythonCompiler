@@ -19,11 +19,11 @@ class BinOp(Node):
         firstChildValue, firstChildType = self.children[0].Evaluate()
         secondChildValue, secondChildType = self.children[1].Evaluate()
 
-        if firstChildType == "TYPE_STRING" and secondChildType != "TYPE_STRING":
+        if firstChildType == "TYPE_STRING":
             raise ValueError(
                 f"Cannot handle operation between {firstChildType} and {secondChildType}"
             )
-        elif firstChildType != "TYPE_STRING" and secondChildType == "TYPE_STRING":
+        elif secondChildType == "TYPE_STRING":
             raise ValueError(
                 f"Cannot handle operation between {firstChildType} and {secondChildType}"
             )
@@ -38,9 +38,6 @@ class BinOp(Node):
             evaluate = firstChildValue * secondChildValue
         else:
             raise ValueError("Could not evaluate BinOp")
-
-        if firstChildType == "TYPE_STRING" and secondChildType == "TYPE_STRING":
-            return (str(evaluate), "TYPE_STRING")
 
         return (int(evaluate), "TYPE_INT")
 
@@ -67,9 +64,6 @@ class LogicalOp(Node):
             else:
                 raise ValueError(f"Operation {self.value} not allowed between strings")
 
-        # firstChildValue = bool(firstChildValue)
-        # secondChildValue = bool(secondChildValue)
-
         if self.value == "LESSTHAN":
             evaluate = firstChildValue < secondChildValue
         elif self.value == "BIGGERTHAN":
@@ -93,6 +87,9 @@ class LogicalOp(Node):
 class UnOp(Node):
     def Evaluate(self):
         childValue, childType = self.children[0].Evaluate()
+
+        # if childType == "TYPE_STRING":
+        #     raise ValueError("Cannot handle unary operation with strings")
 
         if self.value == "PLUS":
             evaluate = +childValue
@@ -166,6 +163,9 @@ class Declare(Node):
 
 class While(Node):
     def Evaluate(self):
+        _, childrenType = self.children[0].Evaluate()
+        if childrenType == "TYPE_STRING":
+            raise ValueError("while(TYPE_STRING) is not allowed")
         # conditional child
         while self.children[0].Evaluate()[0]:
             # block or command child
