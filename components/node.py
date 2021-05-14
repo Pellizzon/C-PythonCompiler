@@ -190,8 +190,10 @@ class Print(Node):
                 print("true")
             else:
                 print("false")
-        elif childType in ["TYPE_STRING", "TYPE_INT"]:
+        elif childType == "TYPE_INT":
             print(childValue)
+        elif childType == "TYPE_STRING":
+            print(childValue.replace('"', ""))
 
 
 # receives an user input
