@@ -24,6 +24,7 @@ class Tokenizer:
             "<",
             ">",
             "!",
+            '"',
         ]
 
         self.double_allowed_symbols = [
@@ -49,7 +50,15 @@ class Tokenizer:
         while i < len(self.origin):
             if self.origin[i].isalpha():
                 identifier = self.findCompleteIdentifier(i)
-                if identifier == "println":
+                if identifier == "int":
+                    self.tokens.append(Token("TYPE_INT", identifier))
+                elif identifier == "bool":
+                    self.tokens.append(Token("TYPE_BOOL", identifier))
+                elif identifier == "string":
+                    self.tokens.append(Token("TYPE_STRING", identifier))
+                elif identifier in ["true", "false"]:
+                    self.tokens.append(Token("BOOL", identifier))
+                elif identifier == "println":
                     self.tokens.append(Token("PRINT", identifier))
                 elif identifier == "readln":
                     self.tokens.append(Token("READ", identifier))
@@ -112,6 +121,14 @@ class Tokenizer:
                     self.tokens.append(Token("NOT", "!"))
                 elif self.origin[i] == "=":
                     self.tokens.append(Token("EQUAL", "="))
+                elif self.origin[i] == '"':
+                    i += 1
+                    whole_string = '"'
+                    while self.origin[i] != '"':
+                        whole_string += self.origin[i]
+                        i += 1
+                    whole_string += '"'
+                    self.tokens.append(Token("STRING", whole_string))
                 i += 1
 
             else:

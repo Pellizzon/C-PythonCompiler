@@ -16,68 +16,111 @@ class Node:
 # must have two children
 class BinOp(Node):
     def Evaluate(self):
-        firstChildEval = self.children[0].Evaluate()
-        secondChildEval = self.children[1].Evaluate()
+        firstChildValue, firstChildType = self.children[0].Evaluate()
+        secondChildValue, secondChildType = self.children[1].Evaluate()
+
+        if firstChildType == "TYPE_STRING" and secondChildType != "TYPE_STRING":
+            raise ValueError(
+                f"Cannot handle operation between {firstChildType} and {secondChildType}"
+            )
+        elif firstChildType != "TYPE_STRING" and secondChildType == "TYPE_STRING":
+            raise ValueError(
+                f"Cannot handle operation between {firstChildType} and {secondChildType}"
+            )
 
         if self.value == "PLUS":
-            evaluate = firstChildEval + secondChildEval
+            evaluate = firstChildValue + secondChildValue
         elif self.value == "MINUS":
-            evaluate = firstChildEval - secondChildEval
+            evaluate = firstChildValue - secondChildValue
         elif self.value == "DIV":
-            evaluate = firstChildEval / secondChildEval
+            evaluate = firstChildValue / secondChildValue
         elif self.value == "MULT":
-            evaluate = firstChildEval * secondChildEval
+            evaluate = firstChildValue * secondChildValue
         else:
             raise ValueError("Could not evaluate BinOp")
 
-        return int(evaluate)
+        if firstChildType == "TYPE_STRING" and secondChildType == "TYPE_STRING":
+            return (str(evaluate), "TYPE_STRING")
+
+        return (int(evaluate), "TYPE_INT")
 
 
 # Deals with Logical operations,
 # must have two children
 class LogicalOp(Node):
     def Evaluate(self):
-        firstChildEval = self.children[0].Evaluate()
-        secondChildEval = self.children[1].Evaluate()
+        firstChildValue, firstChildType = self.children[0].Evaluate()
+        secondChildValue, secondChildType = self.children[1].Evaluate()
+
+        if firstChildType == "TYPE_STRING" and secondChildType != "TYPE_STRING":
+            raise ValueError(
+                f"Cannot handle operation between {firstChildType} and {secondChildType}"
+            )
+        elif firstChildType != "TYPE_STRING" and secondChildType == "TYPE_STRING":
+            raise ValueError(
+                f"Cannot handle operation between {firstChildType} and {secondChildType}"
+            )
+        elif firstChildType == "TYPE_STRING" and secondChildType == "TYPE_STRING":
+            if self.value == "EQOP":
+                evaluate = firstChildValue == secondChildValue
+                return (int(bool(evaluate)), "TYPE_BOOL")
+            else:
+                raise ValueError(f"Operation {self.value} not allowed between strings")
+
+        firstChildValue = bool(firstChildValue)
+        secondChildValue = bool(secondChildValue)
 
         if self.value == "LESSTHAN":
-            evaluate = firstChildEval < secondChildEval
+            evaluate = firstChildValue < secondChildValue
         elif self.value == "BIGGERTHAN":
-            evaluate = firstChildEval > secondChildEval
+            evaluate = firstChildValue > secondChildValue
         elif self.value == "EQOP":
-            evaluate = firstChildEval == secondChildEval
+            evaluate = firstChildValue == secondChildValue
         elif self.value == "AND":
-            evaluate = firstChildEval and secondChildEval
+            evaluate = firstChildValue and secondChildValue
         elif self.value == "OR":
-            evaluate = firstChildEval or secondChildEval
+            evaluate = firstChildValue or secondChildValue
         else:
             raise ValueError("Could not evaluate LogicalOp")
 
-        return int(evaluate)
+        return (int(evaluate), "TYPE_BOOL")
 
 
 # Deals with unary operations,
 # must have one child
 class UnOp(Node):
     def Evaluate(self):
-        childEval = self.children[0].Evaluate()
+        childValue, childType = self.children[0].Evaluate()
 
         if self.value == "PLUS":
-            evaluate = +childEval
+            evaluate = +childValue
         elif self.value == "MINUS":
-            evaluate = -childEval
+            evaluate = -childValue
         elif self.value == "NOT":
-            evaluate = not childEval
+            evaluate = not childValue
+            return (int(evaluate), "TYPE_BOOL")
         else:
             raise ValueError("Could not evaluate UnOp")
 
-        return int(evaluate)
+        return (int(evaluate), "TYPE_INT")
 
 
 # Returns its own value, it's a "number" node
 class IntVal(Node):
     def Evaluate(self):
-        return int(self.value)
+        return (int(self.value), "TYPE_INT")
+
+
+# Returns its own bool value, it's a "boolean" node
+class BoolVal(Node):
+    def Evaluate(self):
+        return (int(self.value == "true"), "TYPE_BOOL")
+
+
+# Returns its own string value, it's a "string" node
+class StringVal(Node):
+    def Evaluate(self):
+        return (str(self.value), "TYPE_STRING")
 
 
 # no operation
@@ -91,14 +134,32 @@ class NoOp(Node):
 # Sets an Identfier's value on the Symbol Table
 class Assign(Node):
     def Evaluate(self):
-        symbolTable.set(self.value, self.children[0].Evaluate())
+        if symbolTable.contains(self.value):
+            var_type = symbolTable.getType(self.value)
+            childValue, _ = self.children[0].Evaluate()
+            if var_type == "TYPE_BOOL":
+                symbolTable.set(self.value, (int(bool(childValue)), var_type))
+            elif var_type == "TYPE_INT":
+                symbolTable.set(self.value, (int(childValue), var_type))
+            elif var_type == "TYPE_STRING":
+                symbolTable.set(self.value, (str(childValue), var_type))
+            else:
+                raise ValueError("Unkown type.")
+        else:
+            raise ValueError(f"Set on undeclared variable {self.value}")
 
 
 # Contary to the Assign object, Identifier used to get
 # an identifier's value from the Symbol Table
 class Identifier(Node):
     def Evaluate(self):
+        # ST is responsible for returning variable value and type
         return symbolTable.get(self.value)
+
+
+class Declare(Node):
+    def Evaluate(self):
+        symbolTable.set(self.value, self.children[0])
 
 
 class While(Node):
@@ -123,14 +184,21 @@ class If(Node):
 # composed by identifiers and/or expressions
 class Print(Node):
     def Evaluate(self):
-        print(self.children[0].Evaluate())
+        childValue, childType = self.children[0].Evaluate()
+        if childType == "TYPE_BOOL":
+            if childValue == 1:
+                print("true")
+            else:
+                print("false")
+        elif childType in ["TYPE_STRING", "TYPE_INT"]:
+            print(childValue)
 
 
 # receives an user input
 # Value and Children are not needed
 class Read(Node):
     def Evaluate(self):
-        return int(input())
+        return (int(input()), "TYPE_INT")
 
 
 # A Block can have many instructions. Each line of code

@@ -1,6 +1,8 @@
 import sys
 from components.parser import Parser
 
+# from components.node import symbolTable
+
 if __name__ == "__main__":
 
     if not sys.argv[1].endswith(".c"):
@@ -10,3 +12,4 @@ if __name__ == "__main__":
         inputData = f.read()
 
     Parser().run(inputData).Evaluate()
+    # print(symbolTable.symbols)
