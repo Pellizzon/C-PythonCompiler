@@ -67,8 +67,8 @@ class LogicalOp(Node):
             else:
                 raise ValueError(f"Operation {self.value} not allowed between strings")
 
-        firstChildValue = bool(firstChildValue)
-        secondChildValue = bool(secondChildValue)
+        # firstChildValue = bool(firstChildValue)
+        # secondChildValue = bool(secondChildValue)
 
         if self.value == "LESSTHAN":
             evaluate = firstChildValue < secondChildValue
@@ -83,7 +83,9 @@ class LogicalOp(Node):
         else:
             raise ValueError("Could not evaluate LogicalOp")
 
-        return (int(evaluate), "TYPE_BOOL")
+        # print(firstChildValue, self.value, secondChildValue, int(evaluate))
+
+        return (int(bool(evaluate)), "TYPE_BOOL")
 
 
 # Deals with unary operations,
@@ -165,14 +167,18 @@ class Declare(Node):
 class While(Node):
     def Evaluate(self):
         # conditional child
-        while self.children[0].Evaluate():
+        while self.children[0].Evaluate()[0]:
             # block or command child
             self.children[1].Evaluate()
 
 
 class If(Node):
     def Evaluate(self):
-        if self.children[0].Evaluate():
+        childrenValue, childrenType = self.children[0].Evaluate()
+        if childrenType == "TYPE_STRING":
+            raise ValueError("if(TYPE_STRING) is not allowed")
+
+        if childrenValue:
             # block or command child 1
             self.children[1].Evaluate()
         else:
@@ -185,12 +191,8 @@ class If(Node):
 class Print(Node):
     def Evaluate(self):
         childValue, childType = self.children[0].Evaluate()
-        if childType == "TYPE_BOOL":
-            if childValue == 1:
-                print("true")
-            else:
-                print("false")
-        elif childType == "TYPE_INT":
+
+        if childType in ["TYPE_INT", "TYPE_BOOL"]:
             print(childValue)
         elif childType == "TYPE_STRING":
             print(childValue.replace('"', ""))
