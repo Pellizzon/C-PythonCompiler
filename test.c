@@ -1,11 +1,9 @@
 {
-    int i;
-    i = --3;
-    while (i < 5)
+    bool x;
+    bool x;
+    x = true;
+    if (x)
     {
-        i = i + 1;
-        println(i);
+        println(x);
     }
-
-    println(!"a");
 }
