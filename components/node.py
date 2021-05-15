@@ -145,7 +145,7 @@ class Assign(Node):
             else:
                 raise ValueError("Unkown type.")
         else:
-            raise ValueError(f"Set on undeclared variable {self.value}")
+            raise ValueError(f"Set on undeclared variable '{self.value}'")
 
 
 # Contary to the Assign object, Identifier used to get
@@ -158,7 +158,7 @@ class Identifier(Node):
 
 class Declare(Node):
     def Evaluate(self):
-        symbolTable.set(self.value, self.children[0])
+        symbolTable.declare(self.value, self.children[0])
 
 
 class While(Node):
