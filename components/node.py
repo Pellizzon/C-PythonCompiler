@@ -197,7 +197,10 @@ class Print(Node):
         elif childType == "TYPE_BOOL":
             print("true") if childValue == 1 else print("false")
         elif childType == "TYPE_STRING":
-            print(childValue.replace('"', ""))
+            if childValue.startswith('"'):
+                print(childValue.replace('"', ""))
+            else:
+                raise ValueError(f"Varible with type string received INT or BOOL")
 
 
 # receives an user input
