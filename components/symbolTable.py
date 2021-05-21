@@ -28,3 +28,9 @@ class SymbolTable:
             return self.symbols[key][1]
         else:
             raise ValueError(f"Tried to access inexistent variable '{key}'")
+
+    def getAddress(self, key):
+        if key in self.symbols:
+            return self.symbols[key][0]
+        else:
+            raise ValueError(f"Tried to access inexistent variable '{key}'")

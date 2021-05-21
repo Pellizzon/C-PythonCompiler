@@ -11,12 +11,12 @@ from components.node import (
     NoOp,
     Block,
     Print,
-    Read,
+    # Read,
     LogicalOp,
     While,
     If,
     Declare,
-    StringVal,
+    # StringVal,
 )
 from components.symbolTable import SymbolTable
 
@@ -24,6 +24,7 @@ from components.symbolTable import SymbolTable
 class Parser:
     def __init__(self):
         self.tokens = None
+        self.EBPDist = 4
 
     def parseFactor(self):
         self.tokens.nextToken()
@@ -31,8 +32,9 @@ class Parser:
             return IntVal(self.tokens.actual.value)
         elif self.tokens.actual.type == "BOOL":
             return BoolVal(self.tokens.actual.value)
-        elif self.tokens.actual.type == "STRING":
-            return StringVal(self.tokens.actual.value)
+        # UNUSED ON THIS RELEASE
+        # elif self.tokens.actual.type == "STRING":
+        #     return StringVal(self.tokens.actual.value)
         elif self.tokens.actual.type in ["PLUS", "MINUS", "NOT"]:
             return UnOp(self.tokens.actual.type, [self.parseFactor()])
         elif self.tokens.actual.type == "LPAR":
@@ -43,14 +45,15 @@ class Parser:
                 raise ValueError("Could not close parenthesis")
         elif self.tokens.actual.type == "IDENTIFIER":
             return Identifier(self.tokens.actual.value)
-        elif self.tokens.actual.type == "READ":
-            self.tokens.nextToken()
-            if self.tokens.actual.value != "(":
-                raise ValueError("readln must be followed by (")
-            self.tokens.nextToken()
-            if self.tokens.actual.value != ")":
-                raise ValueError("readln( must be followed by )")
-            return Read(None)
+        # UNUSED ON THIS RELEASE
+        # elif self.tokens.actual.type == "READ":
+        #     self.tokens.nextToken()
+        #     if self.tokens.actual.value != "(":
+        #         raise ValueError("readln must be followed by (")
+        #     self.tokens.nextToken()
+        #     if self.tokens.actual.value != ")":
+        #         raise ValueError("readln( must be followed by )")
+        #     return Read(None)
         else:
             raise ValueError("Cannot parse Factor")
 
@@ -142,7 +145,8 @@ class Parser:
             if self.tokens.actual.type != "IDENTIFIER":
                 raise ValueError(f"Expected IDENTIFIER after {var_type} declaration.")
             var_name = self.tokens.actual.value
-            result = Declare(var_name, [(None, var_type)])
+            result = Declare(var_name, [(self.EBPDist, var_type)])
+            self.EBPDist += 4
             self.tokens.nextToken()
             if (self.tokens.actual.value) != ";":
                 raise ValueError(
