@@ -82,6 +82,13 @@ PUSH EBP ; guarda o base pointer
 MOV EBP, ESP ; estabelece um novo base pointer
 
 ; codigo gerado pelo compilador
+PUSH DWORD 0 ; Dim x as TYPE_INT [EBP-4]
+MOV EBX, 9
+MOV [EBP-4] , EBX
+MOV EBX, [EBP-4]
+PUSH EBX
+CALL print
+POP EBX
 MOV EBX, 0
 PUSH EBX
 MOV EBX, 1

@@ -1,8 +1,8 @@
 import sys
+from components.symbolTable import SymbolTable
 from components.parser import Parser
 from components.assembler import asm
 
-# from components.node import symbolTable
 
 if __name__ == "__main__":
 
@@ -12,8 +12,9 @@ if __name__ == "__main__":
     with open(f"{sys.argv[1]}", "r") as f:
         inputData = f.read()
 
+    symbolTable = SymbolTable()
     asm.defineHeader()
-    Parser().run(inputData).Evaluate()
+    Parser().run(inputData).Evaluate(symbolTable)
     asm.defineEnd()
     asm.returnAsm()
-    # print(symbolTable.symbols)
+    print(symbolTable.symbols)
