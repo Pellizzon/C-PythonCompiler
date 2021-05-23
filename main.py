@@ -17,4 +17,3 @@ if __name__ == "__main__":
     Parser().run(inputData).Evaluate(symbolTable)
     asm.defineEnd()
     asm.returnAsm()
-    print(symbolTable.symbols)

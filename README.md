@@ -5,7 +5,7 @@
 ## Status:
 ![git status](http://3.129.230.99/svg/Pellizzon/LogicaDaComputacao/)
 
-## v2.3
+## v3.0
 
 ### Diagrama Sintático   
 
@@ -21,14 +21,12 @@
 
 ```
 BLOCK = "{", { COMMAND, } "}" ;
-COMMAND = ( λ | ASSIGNMENT | PRINT | READ), ";" | BLOCK | WHILESTMT | IFSMT | DECLARE ;
+COMMAND = ( λ | ASSIGNMENT | PRINT ), ";" | BLOCK | WHILESTMT | IFSMT | DECLARE ;
 ASSIGNMENT = IDENTIFIER, "=", OREXPR ;
 PRINT = "println", "(", OREXPR, ")" ;
-READ = "readln", "(", ")" ;
 DECLARE = TYPE, IDENTIFIER, ";" ;
 
-TYPE = ( "int" | "strign" | "bool" ) ;
-
+TYPE = ( "int" | "bool" ) ;
 
 IFSTMT = "if", "(", OREXPR, ")", COMMAND ["else", COMMAND] ;
 WHILESTMT = "while", "(", OREXPR, ")", COMMAND ;
@@ -45,7 +43,5 @@ IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
 NUMBER = DIGIT, { DIGIT } ;
 LETTER = ( a | ... | z | A | ... | Z ) ;
 DIGIT = ( 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
-STRING = QUOT_MARK, {(DIGIT | LETTER | SPECIAL_CHARACTERS)}, QUOT_MARK ;
 BOOL = (true | false) ;
-QUOT_MARK = '"' ;
 ```

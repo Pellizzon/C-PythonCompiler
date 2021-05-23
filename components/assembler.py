@@ -3,7 +3,7 @@ class Assembler:
         self.asm = ""
 
     def returnAsm(self):
-        # print(self.asm)
+        print(self.asm)
         with open("output/out.asm", "w") as f:
             f.write(self.asm)
 

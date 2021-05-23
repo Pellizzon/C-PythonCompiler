@@ -95,7 +95,7 @@ class UnOp(Node):
 class IntVal(Node):
     def Evaluate(self, symbolTable):
         asm.asm += f"MOV EBX, {self.value}\n"
-        return (int(self.value), "TYPE_INT", None)
+        # return (int(self.value), "TYPE_INT", None)
 
 
 # Returns its own bool value, it's a "boolean" node
