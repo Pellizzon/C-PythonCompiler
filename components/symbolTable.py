@@ -1,6 +1,7 @@
 class SymbolTable:
     def __init__(self):
         self.symbols = {}
+        self.EBPDist = 4
 
     def set(self, key, val):
         self.symbols[key] = val
@@ -11,9 +12,10 @@ class SymbolTable:
         else:
             raise ValueError(f"Tried to access inexistent variable '{key}'")
 
-    def declare(self, key, val):
+    def declare(self, key, var_type):
         if key not in self.symbols:
-            self.symbols[key] = val
+            self.symbols[key] = (self.EBPDist, var_type)
+            self.EBPDist += 4
         else:
             raise ValueError(f"Redeclaration of variable '{key}'")
 

@@ -24,7 +24,6 @@ from components.symbolTable import SymbolTable
 class Parser:
     def __init__(self):
         self.tokens = None
-        self.EBPDist = 4
 
     def parseFactor(self):
         self.tokens.nextToken()
@@ -145,8 +144,8 @@ class Parser:
             if self.tokens.actual.type != "IDENTIFIER":
                 raise ValueError(f"Expected IDENTIFIER after {var_type} declaration.")
             var_name = self.tokens.actual.value
-            result = Declare(var_name, [(self.EBPDist, var_type)])
-            self.EBPDist += 4
+            result = Declare(var_name, [var_type])
+
             self.tokens.nextToken()
             if (self.tokens.actual.value) != ";":
                 raise ValueError(

@@ -1,13 +1,14 @@
 {
-    int x;
-    x = 9;
-    println(x);
-    println(0 || 1);
-    println(1 || 1);
-    println(0 || 0);
-    println(3);
-    println(--3);
-    println(!!3);
-    println(true);
-    println(false);
+    int i;
+    int n;
+    int f;
+    n = 5;
+    i = 2;
+    f = 1;
+    while (i < n + 1)
+    {
+        f = f * i;
+        i = i + 1;
+    }
+    println(f);
 }

@@ -137,7 +137,8 @@ class Identifier(Node):
 
 class Declare(Node):
     def Evaluate(self, symbolTable):
-        asm.asm += f"PUSH DWORD 0 ; Dim {self.value} as {self.children[0][1]} [EBP-{self.children[0][0]}]\n"
+        print(self.children)
+        asm.asm += f"PUSH DWORD 0\n"
         symbolTable.declare(self.value, self.children[0])
 
 
