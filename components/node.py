@@ -90,6 +90,8 @@ class UnOp(Node):
         else:
             raise ValueError("Could not evaluate UnOp")
 
+        asm.asm += "MOV EBX, EAX\n"
+
 
 # Returns its own value, it's a "number" node
 class IntVal(Node):
