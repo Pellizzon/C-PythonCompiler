@@ -95,7 +95,6 @@ class UnOp(Node):
 class IntVal(Node):
     def Evaluate(self, symbolTable):
         asm.asm += f"MOV EBX, {self.value}\n"
-        # return (int(self.value), "TYPE_INT", None)
 
 
 # Returns its own bool value, it's a "boolean" node
@@ -137,7 +136,6 @@ class Identifier(Node):
 
 class Declare(Node):
     def Evaluate(self, symbolTable):
-        print(self.children)
         asm.asm += f"PUSH DWORD 0\n"
         symbolTable.declare(self.value, self.children[0])
 

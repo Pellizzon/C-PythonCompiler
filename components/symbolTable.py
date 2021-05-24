@@ -1,7 +1,8 @@
 class SymbolTable:
+    EBPD = 4
+
     def __init__(self):
         self.symbols = {}
-        self.EBPDist = 4
 
     def set(self, key, val):
         self.symbols[key] = val
@@ -14,8 +15,8 @@ class SymbolTable:
 
     def declare(self, key, var_type):
         if key not in self.symbols:
-            self.symbols[key] = (self.EBPDist, var_type)
-            self.EBPDist += 4
+            self.symbols[key] = (SymbolTable.EBPD, var_type)
+            SymbolTable.EBPD += 4
         else:
             raise ValueError(f"Redeclaration of variable '{key}'")
 
