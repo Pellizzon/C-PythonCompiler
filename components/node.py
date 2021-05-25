@@ -4,13 +4,13 @@ from components.assembler import asm
 
 
 class Node:
-    id = 0
+    nId = 0
 
     def __init__(self, initValue, initChildren=[]):
         self.value = initValue
         self.children = initChildren
-        # self.id = nodeId.createNodeIdentifier()
-        Node.id += 1
+        self.id = Node.nId
+        Node.nId += 1
 
     def Evaluate(self, symbolTable):
         return

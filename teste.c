@@ -10,5 +10,10 @@
         f = f * i;
         i = i + 1;
     }
+    while (f < 121)
+    {
+        println(3);
+        f = f + 1;
+    }
     println(f);
 }
