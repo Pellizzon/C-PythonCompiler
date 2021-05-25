@@ -3,24 +3,14 @@ from components.assembler import Assembler
 from components.assembler import asm
 
 
-class NodeID:
-    def __init__(self):
-        self.id = 0
-
-    def createNodeIdentifier(self):
-        newId = self.id
-        self.id += 1
-        return newId
-
-
-nodeId = NodeID()
-
-
 class Node:
+    id = 0
+
     def __init__(self, initValue, initChildren=[]):
         self.value = initValue
         self.children = initChildren
-        self.id = nodeId.createNodeIdentifier()
+        # self.id = nodeId.createNodeIdentifier()
+        Node.id += 1
 
     def Evaluate(self, symbolTable):
         return
