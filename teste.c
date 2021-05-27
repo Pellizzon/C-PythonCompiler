@@ -1,8 +1,9 @@
-int soma(int x, int y)
+int soma(int x, int y, string z)
 {
     int a;
     a = x + y;
-    println(a);
+    if (z == "a")
+        println(a);
     return a;
 }
 int main()
@@ -10,7 +11,7 @@ int main()
     int a;
     int b;
     a = 3;
-    b = soma(a, 4 > 2);
+    b = soma(a, 5, "aa");
     println(a);
     println(b);
 }
