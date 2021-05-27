@@ -224,15 +224,9 @@ class Block(Node):
 
 class FunctionDeclare(Node):
     def Evaluate(self, symbolTable):
-        funcArgs = self.children[0]
         funcBlock = self.children[1]
         funcType = self.children[2]
         funcArgsNames = self.children[3]
-        for i in funcArgs:
-            if isinstance(i, Declare):
-                i.Evaluate(symbolTable)
-            else:
-                raise ValueError("Something went wrong")
         ft.newFunc(self.value, funcBlock, funcType, funcArgsNames)
 
 
