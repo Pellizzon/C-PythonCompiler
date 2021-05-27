@@ -17,8 +17,10 @@ from components.node import (
     If,
     Declare,
     StringVal,
+    FunctionDeclare,
+    FunctionCall,
+    Return,
 )
-from components.symbolTable import SymbolTable
 
 
 class Parser:
@@ -42,7 +44,27 @@ class Parser:
             else:
                 raise ValueError("Could not close parenthesis")
         elif self.tokens.actual.type == "IDENTIFIER":
-            return Identifier(self.tokens.actual.value)
+            identifier = self.tokens.actual.value
+            self.tokens.nextToken()
+            if self.tokens.actual.type == "LPAR":
+                funcCallArgs = []
+                self.tokens.nextToken()
+                if self.tokens.actual.type == "RPAR":
+                    return FunctionCall(identifier, funcCallArgs)
+                else:
+                    self.tokens.goBack()
+                while self.tokens.actual.type != "RPAR":
+                    funcCallArgs += [self.parseOrExpr()]
+                    if self.tokens.actual.type == "COMMA":
+                        continue
+                    if self.tokens.actual.type == "RPAR":
+                        break
+                    else:
+                        raise ValueError("aaaa")
+                return FunctionCall(identifier, funcCallArgs)
+            else:
+                self.tokens.goBack()
+                return Identifier(self.tokens.actual.value)
         elif self.tokens.actual.type == "READ":
             self.tokens.nextToken()
             if self.tokens.actual.value != "(":
@@ -52,7 +74,7 @@ class Parser:
                 raise ValueError("readln( must be followed by )")
             return Read(None)
         else:
-            raise ValueError("Cannot parse Factor")
+            raise ValueError(f"Cannot parse Factor, {self.tokens.actual.type}")
 
     def parseTerm(self):
         resultado = self.parseFactor()
@@ -124,11 +146,30 @@ class Parser:
         if self.tokens.actual.type == "IDENTIFIER":
             identifier = self.tokens.actual.value
             self.tokens.nextToken()
-            if self.tokens.actual.type != "EQUAL":
+            if self.tokens.actual.type == "EQUAL":
+                result = Assign(identifier, [self.parseOrExpr()])
+            elif self.tokens.actual.type == "LPAR":
+                funcCallArgs = []
+                self.tokens.nextToken()
+                if self.tokens.actual.type == "RPAR":
+                    self.tokens.nextToken()
+                    return FunctionCall(identifier, funcCallArgs)
+                else:
+                    self.tokens.goBack()
+                while self.tokens.actual.type != "RPAR":
+                    funcCallArgs += [self.parseOrExpr()]
+                    if self.tokens.actual.type == "COMMA":
+                        continue
+                    if self.tokens.actual.type == "RPAR":
+                        break
+                    else:
+                        raise ValueError("aaaa")
+                self.tokens.nextToken()
+                result = FunctionCall(identifier, funcCallArgs)
+            else:
                 raise ValueError(
-                    f"Variable assignments must be followed by '=', but got '{self.tokens.actual.value}'"
+                    f"IDENTIFIERS must be followed by '=' or '(', but got '{self.tokens.actual.value}'"
                 )
-            result = Assign(identifier, [self.parseOrExpr()])
 
             if (self.tokens.actual.value) != ";":
                 raise ValueError(
@@ -208,6 +249,9 @@ class Parser:
             result = self.parseBlock()
             self.tokens.nextToken()
 
+        elif self.tokens.actual.type == "RETURN":
+            result = Return(self.parseOrExpr())
+
         else:
             result = NoOp(None)
             # cases like +1+2*2; enter here
@@ -238,6 +282,59 @@ class Parser:
 
         return Block(None, executedCommands)
 
+    def parseFuncDefBlock(self):
+        types = [
+            "TYPE_INT",
+            "TYPE_BOOL",
+            "TYPE_STRING",
+        ]
+        functions = []
+        while self.tokens.actual.type in types:
+            funcType = self.tokens.actual.type
+            self.tokens.nextToken()
+            if self.tokens.actual.type != "IDENTIFIER":
+                raise ValueError(
+                    f"Expected function name, but got '{self.tokens.actual.type}'"
+                )
+            func_name = self.tokens.actual.value
+            self.tokens.nextToken()
+            if self.tokens.actual.type != "LPAR":
+                raise ValueError(
+                    f"FuncDef: Function name must be followed by '(', but got '{self.tokens.actual.type}'"
+                )
+            self.tokens.nextToken()
+            nodeArgs = []
+            argNames = []
+            while self.tokens.actual.type != "RPAR":
+                if self.tokens.actual.type not in types:
+                    raise ValueError(f"FuncDef: function arguments must have a type")
+                arg_type = self.tokens.actual.type
+                self.tokens.nextToken()
+                if self.tokens.actual.type != "IDENTIFIER":
+                    raise ValueError(
+                        f"FuncDef: argument type must be followed by arg name"
+                    )
+                arg_name = self.tokens.actual.value
+                self.tokens.nextToken()
+                if self.tokens.actual.type == "COMMA":
+                    self.tokens.nextToken()
+                nodeArgs += [Declare(arg_name, [(None, arg_type)])]
+                argNames += [arg_name]
+
+            if self.tokens.actual.type != "RPAR":
+                raise ValueError(
+                    f"FuncDef: Function name must be followed by ')', but got '{self.tokens.actual.type}'"
+                )
+            self.tokens.nextToken()
+            funcBlock = self.parseCommand()
+            # print(self.tokens.actual.type)
+
+            functions += [
+                FunctionDeclare(func_name, [nodeArgs, funcBlock, funcType, argNames])
+            ]
+        functions += [FunctionCall("main")]
+        return Block(None, functions)
+
     def run(self, code):
         code = PrePro(code).filter()
         PrePro(code).check_PAR_balance()
@@ -245,8 +342,7 @@ class Parser:
         self.tokens.tokenize()
 
         self.tokens.nextToken()
-        result = self.parseBlock()
-        self.tokens.nextToken()
+        result = self.parseFuncDefBlock()
 
         if self.tokens.actual.type != "EOF":
             raise ValueError("Did not reach EOF")

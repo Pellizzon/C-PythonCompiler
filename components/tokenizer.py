@@ -26,6 +26,7 @@ class Tokenizer:
             ">",
             "!",
             '"',
+            ",",
         ]
 
         self.double_allowed_symbols = [
@@ -69,6 +70,8 @@ class Tokenizer:
                     self.tokens.append(Token("ELSE", identifier))
                 elif identifier == "while":
                     self.tokens.append(Token("WHILE", identifier))
+                elif identifier == "return":
+                    self.tokens.append(Token("RETURN", identifier))
                 else:
                     self.tokens.append(Token("IDENTIFIER", identifier))
                 i += len(identifier)
@@ -122,6 +125,8 @@ class Tokenizer:
                     self.tokens.append(Token("NOT", "!"))
                 elif self.origin[i] == "=":
                     self.tokens.append(Token("EQUAL", "="))
+                elif self.origin[i] == ",":
+                    self.tokens.append(Token("COMMA", ","))
                 elif self.origin[i] == '"':
                     i += 1
                     whole_string = '"'
@@ -146,3 +151,7 @@ class Tokenizer:
     def nextToken(self):
         self.actual = self.tokens[self.position]
         self.position += 1
+
+    def goBack(self):
+        self.position -= 1
+        self.actual = self.tokens[self.position - 1]

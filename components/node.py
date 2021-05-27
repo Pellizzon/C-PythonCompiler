@@ -1,6 +1,7 @@
-from components.symbolTable import SymbolTable
+from components.tables import FunctionTable, SymbolTable
 
-symbolTable = SymbolTable()
+ft = FunctionTable()
+m = 0
 
 
 class Node:
@@ -8,16 +9,16 @@ class Node:
         self.value = initValue
         self.children = initChildren
 
-    def Evaluate(self):
+    def Evaluate(self, symbolTable):
         return
 
 
 # Deals with binary operations,
 # must have two children
 class BinOp(Node):
-    def Evaluate(self):
-        firstChildValue, firstChildType = self.children[0].Evaluate()
-        secondChildValue, secondChildType = self.children[1].Evaluate()
+    def Evaluate(self, symbolTable):
+        firstChildValue, firstChildType = self.children[0].Evaluate(symbolTable)
+        secondChildValue, secondChildType = self.children[1].Evaluate(symbolTable)
 
         if firstChildType == "TYPE_STRING":
             raise ValueError(
@@ -45,9 +46,9 @@ class BinOp(Node):
 # Deals with Logical operations,
 # must have two children
 class LogicalOp(Node):
-    def Evaluate(self):
-        firstChildValue, firstChildType = self.children[0].Evaluate()
-        secondChildValue, secondChildType = self.children[1].Evaluate()
+    def Evaluate(self, symbolTable):
+        firstChildValue, firstChildType = self.children[0].Evaluate(symbolTable)
+        secondChildValue, secondChildType = self.children[1].Evaluate(symbolTable)
 
         if firstChildType == "TYPE_STRING" and secondChildType != "TYPE_STRING":
             raise ValueError(
@@ -77,16 +78,14 @@ class LogicalOp(Node):
         else:
             raise ValueError("Could not evaluate LogicalOp")
 
-        # print(firstChildValue, self.value, secondChildValue, int(evaluate))
-
         return (int(bool(evaluate)), "TYPE_BOOL")
 
 
 # Deals with unary operations,
 # must have one child
 class UnOp(Node):
-    def Evaluate(self):
-        childValue, childType = self.children[0].Evaluate()
+    def Evaluate(self, symbolTable):
+        childValue, childType = self.children[0].Evaluate(symbolTable)
 
         if childType == "TYPE_STRING":
             raise ValueError("Cannot handle unary operation with strings")
@@ -106,42 +105,43 @@ class UnOp(Node):
 
 # Returns its own value, it's a "number" node
 class IntVal(Node):
-    def Evaluate(self):
+    def Evaluate(self, symbolTable):
         return (int(self.value), "TYPE_INT")
 
 
 # Returns its own bool value, it's a "boolean" node
 class BoolVal(Node):
-    def Evaluate(self):
+    def Evaluate(self, symbolTable):
         return (int(self.value == "true"), "TYPE_BOOL")
 
 
 # Returns its own string value, it's a "string" node
 class StringVal(Node):
-    def Evaluate(self):
+    def Evaluate(self, symbolTable):
         return (str(self.value), "TYPE_STRING")
 
 
 # no operation
 class NoOp(Node):
-    def Evaluate(self):
-        return super().Evaluate()
+    def Evaluate(self, symbolTable):
+        return super().Evaluate(symbolTable)
 
 
 # Assigns an identifier (received by self.value/initValue)
-# to it's actual value (self.children[0].Evaluate());
+# to it's actual value (self.children[0].Evaluate(symbolTable));
 # Sets an Identfier's value on the Symbol Table
 class Assign(Node):
-    def Evaluate(self):
+    def Evaluate(self, symbolTable):
         if symbolTable.contains(self.value):
             var_type = symbolTable.getType(self.value)
-            childValue, _ = self.children[0].Evaluate()
+            # print(self.children[0].Evaluate(symbolTable))
+            childValue, _ = self.children[0].Evaluate(symbolTable)
             if var_type == "TYPE_BOOL":
-                symbolTable.set(self.value, (int(bool(childValue)), var_type))
+                symbolTable.set_(self.value, (int(bool(childValue)), var_type))
             elif var_type == "TYPE_INT":
-                symbolTable.set(self.value, (int(childValue), var_type))
+                symbolTable.set_(self.value, (int(childValue), var_type))
             elif var_type == "TYPE_STRING":
-                symbolTable.set(self.value, (str(childValue), var_type))
+                symbolTable.set_(self.value, (str(childValue), var_type))
             else:
                 raise ValueError("Unkown type.")
         else:
@@ -151,46 +151,46 @@ class Assign(Node):
 # Contary to the Assign object, Identifier used to get
 # an identifier's value from the Symbol Table
 class Identifier(Node):
-    def Evaluate(self):
+    def Evaluate(self, symbolTable):
         # ST is responsible for returning variable value and type
         return symbolTable.get(self.value)
 
 
 class Declare(Node):
-    def Evaluate(self):
+    def Evaluate(self, symbolTable):
         symbolTable.declare(self.value, self.children[0])
 
 
 class While(Node):
-    def Evaluate(self):
-        _, childrenType = self.children[0].Evaluate()
+    def Evaluate(self, symbolTable):
+        _, childrenType = self.children[0].Evaluate(symbolTable)
         if childrenType == "TYPE_STRING":
             raise ValueError("while(TYPE_STRING) is not allowed")
         # conditional child
-        while self.children[0].Evaluate()[0]:
+        while self.children[0].Evaluate(symbolTable)[0]:
             # block or command child
-            self.children[1].Evaluate()
+            self.children[1].Evaluate(symbolTable)
 
 
 class If(Node):
-    def Evaluate(self):
-        childrenValue, childrenType = self.children[0].Evaluate()
+    def Evaluate(self, symbolTable):
+        childrenValue, childrenType = self.children[0].Evaluate(symbolTable)
         if childrenType == "TYPE_STRING":
             raise ValueError("if(TYPE_STRING) is not allowed")
 
         if childrenValue:
             # block or command child 1
-            self.children[1].Evaluate()
+            self.children[1].Evaluate(symbolTable)
         else:
             # block or command child 2
-            self.children[2].Evaluate()
+            self.children[2].Evaluate(symbolTable)
 
 
 # prints a value
 # composed by identifiers and/or expressions
 class Print(Node):
-    def Evaluate(self):
-        childValue, childType = self.children[0].Evaluate()
+    def Evaluate(self, symbolTable):
+        childValue, childType = self.children[0].Evaluate(symbolTable)
 
         if childType == "TYPE_INT":
             print(childValue)
@@ -203,7 +203,7 @@ class Print(Node):
 # receives an user input
 # Value and Children are not needed
 class Read(Node):
-    def Evaluate(self):
+    def Evaluate(self, symbolTable):
         return (int(input()), "TYPE_INT")
 
 
@@ -213,5 +213,56 @@ class Read(Node):
 # being used to build the symbol table and eventualy
 # Print a result
 class Block(Node):
-    def Evaluate(self):
-        [i.Evaluate() for i in self.children]
+    def Evaluate(self, symbolTable):
+        for i in self.children:
+            i.Evaluate(symbolTable)
+            # necessary for recursion purposes and to quit a function
+            # as soon as return is called
+            if symbolTable.contains("return"):
+                return symbolTable.get("return")
+
+
+class FunctionDeclare(Node):
+    def Evaluate(self, symbolTable):
+        funcArgs = self.children[0]
+        funcBlock = self.children[1]
+        funcType = self.children[2]
+        funcArgsNames = self.children[3]
+        for i in funcArgs:
+            if isinstance(i, Declare):
+                i.Evaluate(symbolTable)
+            else:
+                raise ValueError("Something went wrong")
+        ft.newFunc(self.value, funcBlock, funcType, funcArgsNames)
+
+
+class FunctionCall(Node):
+    def Evaluate(self, symbolTable):
+        funcSt = SymbolTable()
+        funcArgs = ft.getFuncArgs(self.value)
+        if len(funcArgs) != len(self.children):
+            raise ValueError("Number of arguments mismatch")
+
+        for i in range(len(funcArgs)):
+            childEval = self.children[i].Evaluate(symbolTable)
+            funcSt.set_(funcArgs[i], childEval)
+
+        ft.getFuncBlock(self.value).Evaluate(funcSt)
+
+        if funcSt.contains("return"):
+            return_val = funcSt.get("return")[0]
+            function_type = ft.getFuncType(self.value)
+            if function_type == "TYPE_BOOL":
+                funcSt.set_("return", (int(bool(return_val)), function_type))
+            elif function_type == "TYPE_INT":
+                funcSt.set_("return", (int(return_val), function_type))
+            elif function_type == "TYPE_STRING":
+                funcSt.set_("return", (str(return_val), function_type))
+            else:
+                raise ValueError("Unkown type.")
+            return funcSt.get("return")
+
+
+class Return(Node):
+    def Evaluate(self, symbolTable):
+        symbolTable.set_("return", self.value.Evaluate(symbolTable))
