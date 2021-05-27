@@ -1,13 +1,16 @@
-int retornaUm()
+int soma(int x, int y)
 {
-    println(33333);
-    return 1;
+    int a;
+    a = x + y;
+    println(a);
+    return a;
 }
-
 int main()
 {
-    int x;
-
-    x = 3;
-    println(retornaUm());
+    int a;
+    int b;
+    a = 3;
+    b = soma(a, 4 > 2);
+    println(a);
+    println(b);
 }

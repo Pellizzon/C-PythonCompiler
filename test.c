@@ -22,6 +22,8 @@ int main()
     x = retornaUm();
     println(x);
     int y;
+    y = retornaUm();
+    println(y);
     y = 0;
     while (y < 10)
     {

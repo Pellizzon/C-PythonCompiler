@@ -10,22 +10,36 @@
 ### Diagrama Sintático   
 
 <p align="center">
-    <img src="DS.png">
+    <img src="DS1.png">
+</p>
+
+<p align="center">
+    <img src="DS2.png">
+</p>
+
+<p align="center">
+    <img src="DS3.png">
+</p>
+
+<p align="center">
+    <img src="DS4.png">
 </p>
 
 ### EBNF
 
-<p align="center">
-    <img src="EBNF.png" width="40%">
-</p>
-
 ```
+FUNCDEFBLOCK { TYPE, IDENTIFIER, "(", ARGS, ")", COMMAND } ;
+ARGS = λ | TYPE, IDENTIFIER { ",", TYPE, IDENTIFIER } ;
 BLOCK = "{", { COMMAND, } "}" ;
-COMMAND = ( λ | ASSIGNMENT | PRINT | READ), ";" | BLOCK | WHILESTMT | IFSMT | DECLARE ;
+COMMAND = ( λ | ASSIGNMENT | PRINT | READ), ";" | BLOCK | WHILESTMT | IFSMT | DECLARE | FUNCCALL ;
 ASSIGNMENT = IDENTIFIER, "=", OREXPR ;
 PRINT = "println", "(", OREXPR, ")" ;
 READ = "readln", "(", ")" ;
 DECLARE = TYPE, IDENTIFIER, ";" ;
+
+FUNCCALL = IDENTIFIER, "(", FUNCCALLARGS, ")", ";" ;
+
+FUNCCALLARGS = λ | OREXPR { ",", OREXPR } ;
 
 TYPE = ( "int" | "strign" | "bool" ) ;
 
@@ -40,7 +54,7 @@ RELEXPR = EXPRESSION [(">" | "<"), EXPRESSION] ;
 
 EXPRESSION = TERM, { ("+" | "-"), TERM } ;
 TERM = FACTOR, { ("*" | "/"), FACTOR } ;
-FACTOR = (("+" | "-"| "!"), FACTOR) | NUMBER | "(", OREXPR, ")" | IDENTIFIER | READ | STRING;
+FACTOR = (("+" | "-"| "!"), FACTOR) | NUMBER | "(", OREXPR, ")" | READ | STRING | IDENTIFIER | FUNCCALLARGS ;
 IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
 NUMBER = DIGIT, { DIGIT } ;
 LETTER = ( a | ... | z | A | ... | Z ) ;

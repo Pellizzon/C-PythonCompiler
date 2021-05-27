@@ -303,7 +303,6 @@ class Parser:
                     f"FuncDef: Function name must be followed by '(', but got '{self.tokens.actual.type}'"
                 )
             self.tokens.nextToken()
-            nodeArgs = []
             argNames = []
             while self.tokens.actual.type != "RPAR":
                 if self.tokens.actual.type not in types:
@@ -318,8 +317,7 @@ class Parser:
                 self.tokens.nextToken()
                 if self.tokens.actual.type == "COMMA":
                     self.tokens.nextToken()
-                nodeArgs += [Declare(arg_name, [(None, arg_type)])]
-                argNames += [arg_name]
+                argNames += [(arg_name, arg_type)]
 
             if self.tokens.actual.type != "RPAR":
                 raise ValueError(
@@ -327,10 +325,9 @@ class Parser:
                 )
             self.tokens.nextToken()
             funcBlock = self.parseCommand()
-            # print(self.tokens.actual.type)
 
             functions += [
-                FunctionDeclare(func_name, [nodeArgs, funcBlock, funcType, argNames])
+                FunctionDeclare(func_name, [argNames, funcBlock, funcType])
             ]
         functions += [FunctionCall("main")]
         return Block(None, functions)

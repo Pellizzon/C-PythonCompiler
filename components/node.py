@@ -1,7 +1,6 @@
 from components.tables import FunctionTable, SymbolTable
 
 ft = FunctionTable()
-m = 0
 
 
 class Node:
@@ -224,9 +223,9 @@ class Block(Node):
 
 class FunctionDeclare(Node):
     def Evaluate(self, symbolTable):
+        funcArgsNames = self.children[0]
         funcBlock = self.children[1]
         funcType = self.children[2]
-        funcArgsNames = self.children[3]
         ft.newFunc(self.value, funcBlock, funcType, funcArgsNames)
 
 
@@ -236,10 +235,14 @@ class FunctionCall(Node):
         funcArgs = ft.getFuncArgs(self.value)
         if len(funcArgs) != len(self.children):
             raise ValueError("Number of arguments mismatch")
-
         for i in range(len(funcArgs)):
             childEval = self.children[i].Evaluate(symbolTable)
-            funcSt.set_(funcArgs[i], childEval)
+            argumentIdentifier, argumentType = funcArgs[i]
+            if argumentType != childEval[1]:
+                raise ValueError(
+                    f"argument '{argumentIdentifier}' of function '{self.value}' declared as '{argumentType}', but got '{childEval[1]}'"
+                )
+            funcSt.set_(argumentIdentifier, childEval)
 
         ft.getFuncBlock(self.value).Evaluate(funcSt)
 
