@@ -322,6 +322,8 @@ class Parser:
                 self.tokens.nextToken()
                 if self.tokens.actual.type == "COMMA":
                     self.tokens.nextToken()
+                    if self.tokens.actual.type == "RPAR":
+                        raise ValueError("',' not followed by other arguments")
                 argNames += [(arg_name, arg_type)]
 
             if self.tokens.actual.type != "RPAR":

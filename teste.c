@@ -1,17 +1,12 @@
-int soma(int x, int y, string z)
+/*Erro: tipo do parametro*/
+int exibe(int x)
 {
-    int a;
-    a = x + y;
-    if (z == "a")
-        println(a);
-    return a;
+    println(x);
 }
+
 int main()
 {
-    int a;
-    int b;
-    a = 3;
-    b = soma(a, 5, "aa");
-    println(a);
-    println(b);
+    string msg;
+    msg = "oi";
+    exibe(msg);
 }

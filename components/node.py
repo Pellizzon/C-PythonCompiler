@@ -239,13 +239,14 @@ class FunctionCall(Node):
             childEval = self.children[i].Evaluate(symbolTable)
             argumentIdentifier, argumentType = funcArgs[i]
             if argumentType == "TYPE_STRING" and childEval[1] in [
-                "TYPE_BOOL, TYPE_INT"
+                "TYPE_BOOL",
+                "TYPE_INT",
             ]:
                 raise ValueError(
                     f"argument '{argumentIdentifier}' of function '{self.value}' declared as '{argumentType}', but got '{childEval[1]}'"
                 )
             elif (
-                argumentType in ["TYPE_BOOL, TYPE_INT"]
+                argumentType in ["TYPE_BOOL", "TYPE_INT"]
                 and childEval[1] == "TYPE_STRING"
             ):
                 raise ValueError(
