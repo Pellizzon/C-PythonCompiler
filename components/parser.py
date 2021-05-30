@@ -251,6 +251,11 @@ class Parser:
 
         elif self.tokens.actual.type == "RETURN":
             result = Return(self.parseOrExpr())
+            if (self.tokens.actual.value) != ";":
+                raise ValueError(
+                    f"Return commands must end with ';', but got '{self.tokens.actual.value}'"
+                )
+            self.tokens.nextToken()
 
         else:
             result = NoOp(None)
@@ -326,9 +331,7 @@ class Parser:
             self.tokens.nextToken()
             funcBlock = self.parseCommand()
 
-            functions += [
-                FunctionDeclare(func_name, [argNames, funcBlock, funcType])
-            ]
+            functions += [FunctionDeclare(func_name, [argNames, funcBlock, funcType])]
         functions += [FunctionCall("main")]
         return Block(None, functions)
 
